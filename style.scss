@@ -1,3 +1,19 @@
-footer{
-  background-color: black
-}
+@import 'styles/fonts';
+@import 'styles/default';  // подключаем дефолтные стили, они находятся в файле default.scss
+@import 'styles/header'; 
+@import 'styles/catalog'; 
+@import 'styles/breadcrumb'; 
+@import 'styles/goods'; 
+@import 'styles/product'; 
+@import 'styles/cart'; 
+@import 'styles/card'; 
+@import 'styles/order'; 
+@import 'styles/form-order';
+@import 'styles/radio';
+@import 'styles/table';
+@import 'styles/footer'; 
+@import 'styles/contacts';
+
+
+
+

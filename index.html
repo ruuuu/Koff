@@ -3,39 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <link rel="preload" href="/fonts/open-sans-v36-cyrillic_latin-regular.woff2" as="font" type="font/woff2" crossorigin>   <!-- чтобы шрифты при перезагруке станицы не скакали -->
+    <link rel="preload" href="/fonts/open-sans-v36-cyrillic_latin-700.woff2" as="font" type="font/woff2" crossorigin> 
+    <link rel="preload" href="/fonts/inter-v13-cyrillic_latin-regular.woff2" as="font" type="font/woff2" crossorigin> 
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Koff</title>
     <script type="module" src="/main.js"></script>
   </head>
 
+  
   <body>
     <header class="header">
       <div class="container header__container">
-          <a href="/">
-            <img  class="header__link-logo" src="img/logo.svg" alt="Логотип мебельного маркета  Khoff">   <!--  из папки public берем -->
+          <a class="header__link-logo" href="/">
+            <img class="header__logo" src="/img/logo.svg" alt="Логотип мебельного маркета Khoff">   <!--  из папки public берем -->
           </a>
 
-          <form class="header__search" action="/api/prodyuct">
+          <form class="header__search" action="/api/product">
             <input class="header__input" type="search" name="search" placeholder="Введите текст">
             
             <button class="header__btn" type="submit">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7.66683 13.9999C11.1646 13.9999 14.0002 11.1644 14.0002 7.66659C14.0002 4.16878 11.1646 1.33325 7.66683 1.33325C4.16903 1.33325 1.3335 4.16878 1.3335 7.66659C1.3335 11.1644 4.16903 13.9999 7.66683 13.9999Z" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M14.6668 14.6666L13.3335 13.3333" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7.66683 13.9999C11.1646 13.9999 14.0002 11.1644 14.0002 7.66659C14.0002 4.16878 11.1646 1.33325 7.66683 1.33325C4.16903 1.33325 1.3335 4.16878 1.3335 7.66659C1.3335 11.1644 4.16903 13.9999 7.66683 13.9999Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M14.6668 14.6666L13.3335 13.3333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>  
-              </button>
+            </button>
           </form>
 
           <div class="header__control">
-            <a href="header__link" href="/favorite">
-              <span class="hesder__link-text">Избранное</span>
+            <a class="header__link"  href="/favorite">
+              <span class="header__link-text">Избранное</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.41301 13.8733C8.18634 13.9533 7.81301 13.9533 7.58634 13.8733C5.65301 13.2133 1.33301 10.46 1.33301 5.79332C1.33301 3.73332 2.99301 2.06665 5.03967 2.06665C6.25301 2.06665 7.32634 2.65332 7.99967 3.55998C8.67301 2.65332 9.75301 2.06665 10.9597 2.06665C13.0063 2.06665 14.6663 3.73332 14.6663 5.79332C14.6663 10.46 10.3463 13.2133 8.41301 13.8733Z" stroke="#1C1C1C" stroke-linecap="round" stroke-linejoin="round"/>
               </svg> 
             </a>
 
-            <a href="header__link" href="/cart">
-              <span class="hesder__link-text">Корзина</span>
+            <a class="header__link" href="/cart">
+              <span class="header__link-text">Корзина</span>
               <span class="header__count">(15)</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M5.87329 1.33325L3.45996 3.75325" stroke="#1C1C1C" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -300,7 +306,7 @@
                 </tr>
               </table>
 
-              <div class="produc__btns">
+              <div class="product__btns">
                 <button class="product__btn" type="button">В Корзину</button>
                 <button class="product__like">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -372,7 +378,7 @@
             <form class="cart__form form-order" id="form" action="#" method="POST">
               <h3 class="cart__subtitle">Данные для доставки</h3>
 
-              <fieldset class="form-order___fieldset form-order__fieldset--input">  
+              <fieldset class="form-order__fieldset form-order__fieldset--input">  
                 <input class="form-order__input" type="text" name="name" placeholder="Фамилия Имя Отчество">
                 <input class="form-order__input" type="tel" name="phone" placeholder="Телефон">
                 <input class="form-order__input" type="email" name="email" placeholder="E-mail">
@@ -380,7 +386,7 @@
                 <textarea class="form-order__textarea" name="comments" placeholder="Комментарий к заказу"></textarea>
               </fieldset>
 
-              
+
               <fieldset class="form-order__fieldset form-order__fieldset--radio">  
                 <legend class="form-order__legend"> Доставка </legend>
 
@@ -408,6 +414,52 @@
             </form>
           </div>
         </div>
+      </section>
+
+      <section class="order">
+        <div class="order__info">
+          <h3>Заказ успешно размещен</h3>
+          <p class="order__price">2&nbsp;000&nbsp;Р</p>
+          <p class="order__article"> №43435</p>
+
+          <div class="order__characteristics">
+            <h3 class="order__characteristics-title">Данные доставки</h3>
+            <table class="order__characteristics-table table">
+              <tr class="table__row">
+                <td class="table__field">Получатель</td>
+                <td class="table__value">Иванов Петр Александрович</td>
+              </tr>
+
+              <tr class="table__row">
+                <td class="table__field">Телефон</td>
+                <td class="table__value">+7 (737) 346 23 00</td>
+              </tr>
+
+              <tr class="table__row">
+                <td class="table__field">E-mail</td>
+                <td class="table__value">Ivanov84@gmail.com</td>
+              </tr>
+
+              <tr class="table__row">
+                <td class="table__field">Адрес доставки</td>
+                <td class="table__value">Москва, ул. Ленина, 21, кв. 33</td>
+              </tr>
+
+              <tr class="table__row">
+                <td class="table__field">Способ оплаты</td>
+                <td class="table__value">Картой при получении</td>
+              </tr>
+
+              <tr class="table__row">
+                <td class="table__field">Способ получения</td>
+                <td class="table__value">Доставка</td>
+              </tr>
+            </table>
+
+            <button class="product__btn" type="button">На главную</button>
+          </div>
+        </div>
+
       </section>
     </main>
 

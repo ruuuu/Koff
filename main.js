@@ -1,20 +1,29 @@
 import 'normalize.css'
 import './style.scss'
-import Swiper from 'swiper';
-import { Navigation, Thumbs } from 'swiper/modules';
-import 'swiper/css';
+// import Swiper from 'swiper';
+// import { Navigation, Thumbs } from 'swiper/modules';
+// import 'swiper/css';
+import Navigo from 'navigo';
 
-const swiperThumbnails = new Swiper('.product__slider-thumbnails',
+
+
+const productSlider = () => {
+
+   Promise.all([   // принимает массив промисов
+      import('swiper/modules'),  
+      import('swiper'),
+      import('swiper/css'),
+   ]).then(([ { Navigation, Thumbs },  Swiper]) => {
+
+      const swiperThumbnails = new Swiper.default('.product__slider-thumbnails',  // маленкий слайдер
       {
            spaceBetween: 10,
            slidesPerView: 4,
            freeMode: true,
            watchSlidesProgress: true
+      });
 
-});
-
-
-const swiper2 = new Swiper('.product__slider-main',
+      const swiper2 = new Swiper.default('.product__slider-main',  // большой слайдер
       {
            spaceBetween: 10,
            navigation: {
@@ -23,10 +32,59 @@ const swiper2 = new Swiper('.product__slider-main',
            },
            modules: [Navigation, Thumbs],
            thumbs: {
-              swiper: swiperThumbnails,
-           }
+              swiper: swiperThumbnails, // указываем маленький слайдер
+           },
+      });
 
-});
+   });
+
+   
+};
 
 
 
+
+
+const init = () => {
+
+   productSlider(); 
+
+   // роутинг, используем Navigo:
+   const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // начало от корня '/', для ссылок котрые начинаются на /
+  
+
+  router
+   .on("/", () => {         // когда в корне, то вызовется фукния
+      console.log('находимся на главной')
+   })
+   .on("/category", (obj) => {        
+      console.log('находимся на станице категории')
+      console.log(obj)
+   })
+   .on("/favorite", () => {        
+      console.log('находимся на станице Избранное')
+   })
+   .on("/search", () => {        
+      console.log('находимся на станице Поиска')
+   })
+   .on("/product/:id", (obj) => {        
+      console.log('находимся на станице Продукта')
+      console.log(obj)
+   })
+   .on("/cart", (obj) => {        
+      console.log('находимся на станице Корзина')
+   })
+   .on("/order", (obj) => {        
+      console.log('находимся на станице Заказ')
+   })
+   .notFound(() => {
+      document.body.innerHTML = '<h2> Ошибка 40 4</h2>';
+   });
+
+   
+   router.resolve();             // запускаем роутинг
+
+};
+
+
+init();

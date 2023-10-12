@@ -4,6 +4,10 @@ import './style.scss'
 // import { Navigation, Thumbs } from 'swiper/modules';
 // import 'swiper/css';
 import Navigo from 'navigo';
+import { Header } from './modules/Header/Header';
+import { Main } from './modules/Main/Main';
+import { Footer } from './modules/Footer/Footer';
+import { Order } from './modules/Order/Order';
 
 
 
@@ -47,7 +51,14 @@ const productSlider = () => {
 
 const init = () => {
 
+   new Header().mount();
+   new Main().mount();
+   new Footer().mount();
+  
+   
+
    productSlider(); 
+
 
    // роутинг, используем Navigo:
    const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // начало от корня '/', для ссылок котрые начинаются на /
@@ -76,6 +87,8 @@ const init = () => {
    })
    .on("/order", (obj) => {        
       console.log('находимся на станице Заказ')
+      new Order().mount(new Main().element);
+      
    })
    .notFound(() => {
       document.body.innerHTML = '<h2> Ошибка 40 4</h2>';

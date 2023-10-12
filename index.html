@@ -15,10 +15,11 @@
 
   
   <body>
+    <!-- 
     <header class="header">
       <div class="container header__container">
           <a class="header__link-logo" href="/">
-            <img class="header__logo" src="/img/logo.svg" alt="Логотип мебельного маркета Khoff">   <!--  из папки public берем -->
+            <img class="header__logo" src="/img/logo.svg" alt="Логотип мебельного маркета Khoff">     из папки public берем
           </a>
 
           <form class="header__search" action="/api/product">
@@ -32,7 +33,7 @@
             </button>
           </form>
 
-          <div class="header__control">
+          <nav class="header__control">
             <a class="header__link"  href="/favorite">
               <span class="header__link-text">Избранное</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,12 +53,12 @@
                 <path d="M2.33301 6.66675L3.27301 12.4267C3.48634 13.7201 3.99967 14.6667 5.90634 14.6667H9.92634C11.9997 14.6667 12.3063 13.7601 12.5463 12.5067L13.6663 6.66675" stroke="#1C1C1C" stroke-linecap="round"/>
               </svg> 
             </a>
-          </div>
+          </nav>
       </div>
     </header>
 
 
-    <main>
+   <main>
       <div class="catalog">
         <div class="container catalog__container">
           <ul class="catalog__list">
@@ -118,7 +119,7 @@
       </div>
 
 
-      <section class="goods">
+      <section class="goods" hidden>
         <div class="container">
           <h2 class="goods__title">Избранное</h2>
 
@@ -217,7 +218,7 @@
           </ul>
 
           <div class="pagination">
-            <div class="pagination__bar" style="--width: calc(21 / 31 * 100%)"> <!-- переменная width это ширина фиолетвой части -->
+            <div class="pagination__bar" style="--width: calc(21 / 31 * 100%)">  переменная width это ширина фиолетвой части 
               
             </div>
 
@@ -242,15 +243,17 @@
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
 
 
-      <section class="product"> <!-- страница продукта -->
+      <!-- страница продукта: -->
+      <!-- <section class="product" hidden> 
         <div class="container">
           <h2 class="product__title">Кресло с подлокотниками</h2>
           <div class="product__wrapper">
             <div class="product__picture">
-              <div class="swiper product__slider-main"> <!-- верхний слайдер -->
+               верхний слайдер: 
+              <div class="swiper product__slider-main"> 
                 <div class="swiper-wrapper product__main-list">
                   <div class="swiper-slide product__slide">
                     <img class="product__image" src="/img/cart.jpg" alt="">
@@ -284,8 +287,8 @@
                 </button>
               </div>
   
-  
-              <div class="swiper product__slider-thumbnails"> <!-- нижний слайдер -->
+               нижний слайдер:
+              <div class="swiper product__slider-thumbnails"> 
                 <div class="swiper-wrapper product__thumbnails-list">
                   <div class="swiper-slide product__slide-thumbnail">
                     <img class="product__img-thumbnail" src="/img/cart.jpg" alt="">
@@ -360,10 +363,10 @@
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
 
-
-      <section class="cart" hidden> <!-- Корзина -->
+      <!-- Корзина: -->
+      <!-- <section class="cart" hidden> 
         <div class="container cart__container">
           <h2 class="cart__title"> Корзина </h2>
 
@@ -414,7 +417,7 @@
                 <p class="cart__place-count">20 000 Р</p>
               </div>
               <p class="cart__place-delivery">Доставка 0 Р</p>
-              <button class="cart__place-btn" type="submit" form="order"> Оформить заказ </button> <!--  order это id  формы, он нужен чтобы сзявять зту кнопку с формой -->
+              <button class="cart__place-btn" type="submit" form="order"> Оформить заказ </button>   order это id  формы, он нужен чтобы сзявять зту кнопку с формой
             </div>
           </div>
             
@@ -456,13 +459,19 @@
               </fieldset>
           </form>
         </div>
-      </section>
+      </section> -->
 
 
-      <section class="order" hidden> <!-- Заказ -->
+      <!-- Заказ: -->
+      <!-- <section class="order"> 
         <div class="order__info">
-          <h3> Заказ успешно размещен </h3>
-          <p class="order__price"> 2&nbsp;000&nbsp;Р </p>
+         
+
+          <div class="order__wrapper">
+            <h3 class="order__title"> Заказ успешно размещен </h3>
+            <p class="order__price"> 2&nbsp;000&nbsp;Р </p>
+          </div>
+         
           <p class="order__article"> №43435</p>
 
           <div class="order__characteristics">
@@ -499,15 +508,15 @@
               </tr>
             </table>
 
-            <button class="product__btn" type="button"> На главную </button>
+            <button class="product__btn order__btn" type="button"> На главную </button>
           </div>
         </div>
+      </section> 
+      
+    </main> -->
 
-      </section>
-    </main>
 
-
-    <footer class="footer">
+    <!-- <footer class="footer">
       <div class="container footer__container">
         <a class="footer__link-logo" href="">
           <img class="footer__logo" src="img/logo.svg" alt="Логотип мебельного маркета  Khoff">
@@ -562,6 +571,6 @@
 
         <p class="footer__copyright">@ Koff, 2023</p>
       </div>
-    </footer>
+    </footer>  -->
   </body>
 </html>

@@ -28,18 +28,23 @@ export class Order {
            
            const orderWrapper = this.getWrapper();
 
-           const orderPrice =  
+           const orderPrice = document.createElement('p');
+           orderPrice.classList.add('order__article');
+           orderPrice.textContent = '№43435';
 
-           //<p class="order__article"> №43435</p>
+          
+           const orderCharacteristics = this.getOrderCharacteristics();
 
-            // const searchForm = this.getSearchForm();
+           
+            const button = document.createElement('button');
+            button.classList.add('product__btn', 'order__btn');
+            button.type = 'button';
+            button.textContent = 'На главную';
 
-            // const navigation = this.getNavigation();
 
+            orderInfo.append(orderWrapper, orderPrice, orderCharacteristics, button);
 
-
-            orderInfo.append(orderWrapper);
-
+            this.element.append(orderInfo)
             elementMain.append(this.element);
            
             this.isMounted = true;    
@@ -60,15 +65,63 @@ export class Order {
             h3.classList.add('order__title');
             h3.textContent = 'Заказ успешно размещен';
 
-            const p = document.createElement('h3');
+            const p = document.createElement('p');
             p.classList.add('order__price');
-            p.textContent = '2&nbsp;000&nbsp;Р';
+            p.innerHTML = `2&nbsp;000&nbsp;Р`;
 
             wrapper.append(h3, p);
 
             return wrapper;
       }
 
-}
 
+
+      getOrderCharacteristics(){
+            const characteristics = document.createElement('div');
+            characteristics .classList.add('order__characteristics');
+
+
+            const h3 = document.createElement('h3');
+            h3.classList.add('order__characteristics-title');
+           
+            const table = document.createElement('table');
+            table.classList.add('order__characteristics-table', 'table');
+
+            const tr1 = document.createElement('tr');
+            tr1.classList.add('table__row');
+
+            const tdField1 = document.createElement('td');
+            tdField1.classList.add('table__field');
+            tdField1.textContent = 'Получатель';
+
+            const tdValue1 = document.createElement('td');
+            tdValue1.classList.add('table__value');
+            tdValue1.textContent = 'Иванов Петр Александрович';
+
+      //       <tr class="table__row">
+      //       <td class="table__field"> Телефон </td>
+      //       <td class="table__value"> +7 (737) 346 23 00 </td>
+      //     </tr>
+
+            const tr2 = document.createElement('tr');
+            tr2.classList.add('table__row');
+
+            const tdField2 = document.createElement('td');
+            tdField2.classList.add('table__field');
+            tdField2.textContent = 'Телефон';
+
+            const tdValue2 = document.createElement('td');
+            tdValue2.classList.add('table__value');
+            tdValue2.textContent = '+7 (737) 346 23 00';
+
+
+            tr1.append(tdField1, tdValue1); 
+            tr2.append(tdField2, tdValue2); 
+            table.append(tr1, tr2); 
+            characteristics.append(h3, table);
+
+            return characteristics;
+      }
+
+}
 

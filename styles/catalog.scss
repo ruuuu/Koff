@@ -1,5 +1,5 @@
 .catalog {
-      overflow-x: hidden;  // гори скролл пояится
+      overflow-x: hidden;  // гориз скролл пояится
       padding-top: 24px;
       padding-bottom: 24px;
 
@@ -51,6 +51,7 @@
             color: #969EAE;
             outline: none;
             border: 1px solid transparent;
+            white-space: nowrap;  // чтобы текст не переносился
 
             &:hover,
             &:focus-visible{

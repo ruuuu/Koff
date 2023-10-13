@@ -1,6 +1,8 @@
 .card {
       position: relative;
-     
+      display: flex;
+      flex-direction: column;
+      height: 100%;
 
      
       @media (min-width: 820px) {
@@ -27,14 +29,26 @@
 
 
       &__image {
-            width: 100%;  // если картинка маленькая будет
-            object-fit: cover;
+            width: 100%;  // если картинка маленькая будет, чтобы она растянулась
+            object-fit: contain;  // cover
             border-radius: 16px;
+            aspect-ratio: 7/6;  // размеры картинки 140px / 120px = 7/6
+
+            @media (min-width: 580px) {
+                  aspect-ratio: 23/20; //
+            }
+
+            @media (min-width: 820px) {
+                  aspect-ratio: 151/125; //
+            }
+
       }
 
 
       &__info{
 
+            flex-grow: 1;
+            
             @media (min-width: 580px) {
                   display: flex;
                   justify-content: space-between;

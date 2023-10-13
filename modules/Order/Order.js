@@ -51,7 +51,7 @@ export class Order {
       }
 
 
-      unmounted(){
+      unmount(){
             this.element.remove();                              // убираем элемент из разметки
             this.isMounted = false;    
       }

@@ -14,7 +14,7 @@ export class Footer {
                   this.element = document.createElement('footer');  // род элемент
                   this.element.classList.add('footer');
                   this.containerElement = addContainer(this.element, 'footer__container');
-                  this.isMounted = false;                                                         // элемент добавлен в разметку    
+                  this.isMounted = false;                                                         // элемент еще не добавлен в разметку    
             }
            
             return Footer.instance;
@@ -37,7 +37,7 @@ export class Footer {
       }
 
 
-      unmounted(){
+      unmount(){
             this.element.remove();                              // убираем элемент из разметки
             this.isMounted = false;    
       }

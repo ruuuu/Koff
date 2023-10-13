@@ -34,7 +34,7 @@ export class  ProductList {
 
             this.containerElement.append(titleElem);
 
-            this.updateListElem(data);
+            this.updateListElem(data);                            // отрисовка карточек товаров
 
             if(this.isMounted){                                   // если уже элемент добавлен  в разметку
                   return;
@@ -46,7 +46,7 @@ export class  ProductList {
 
 
 
-      unmounted(){
+      unmount(){
             this.element.remove();                              // убираем элемент из разметки
             this.isMounted = false;    
       }

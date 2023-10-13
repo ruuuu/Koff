@@ -69,4 +69,21 @@ export class ApiService{
            return data;          // [{},{},{}]
       }
 
+
+
+      async getProductCategories(){               
+
+            const data = await this.getData('api/productCategories');        
+            return data;          // список категрий ["Тумбы", "Стулья", "Столы", "Пуфы и банкетки", "Кровати", "Диваны", "Полки", "Стеллажи"]
+      }
+
+
+
+      async getProductCategory(id){               
+
+            const data = await this.getData(`api/products/${id}`);        
+            return data;          // [{},{},{}]
+      }
+      
+
 }

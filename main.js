@@ -10,6 +10,7 @@ import { Footer } from './modules/Footer/Footer';
 import { Order } from './modules/Order/Order';
 import { ProductList } from './modules/ProductList/ProductList';
 import { ApiService } from './services/ApiService';
+import { Catalog } from './modules/Catalog/Catalog';
 
 
 
@@ -58,6 +59,10 @@ const init = () => {
    new Header().mount();
    new Main().mount();
    new Footer().mount();
+
+   api.getProductCategories().then((data) => {
+      new Catalog().mount(new Main().element, data);
+   });
   
    
 
@@ -82,32 +87,35 @@ const init = () => {
       // after: ()=>{
       //    console.log('after ')
       // },
-      leave: (done)=>{
+      leave: (done)=>{                          // когда уходим с '/' страницы, выполнится функция
          console.log('leave ')
+         new ProductList().unmount();           // очищаем верстку товаров
          done();
       },
       already: ()=>{
          console.log('already ')
-         
-     }
+      }
    })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
-   .on("/category", () => {        
+   .on("/category", async() => {        
       console.log('находимся на станице категории')
-      new ProductList().mount(new Main().element, [1, 2, 3, 4, 5, 6], 'Категрии');  
+      const products = await api.getProducts(); 
+      new ProductList().mount(new Main().element, products, 'Категрии');  
    },
    {
-      leave: (done)=>{
+      leave: (done)=>{                       // когда уходим с '/category' страницы, выполнится функция
          console.log('leave ')
+         new ProductList().unmount(); 
          done();
       },
    })
-   .on("/favorite", () => {        
+   .on("/favorite", async() => {        
       console.log('находимся на станице Избранное')
-      new ProductList().mount(new Main().element, [1, 2, 3, 4], 'Избранное');  
+      const products = await api.getProducts(); 
+      new ProductList().mount(new Main().element, products, 'Избранное');  
    },
    {
       leave: (done)=>{
-         console.log('leave ')
+         new ProductList().unmount(); 
          done();
       },
    })

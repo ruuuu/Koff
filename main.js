@@ -9,6 +9,7 @@ import { Main } from './modules/Main/Main';
 import { Footer } from './modules/Footer/Footer';
 import { Order } from './modules/Order/Order';
 import { ProductList } from './modules/ProductList/ProductList';
+import { ApiService } from './services/ApiService';
 
 
 
@@ -51,6 +52,8 @@ const productSlider = () => {
 
 
 const init = () => {
+   const api = new ApiService();
+   console.log('api ', api)
 
    new Header().mount();
    new Main().mount();
@@ -61,14 +64,15 @@ const init = () => {
    productSlider(); 
 
 
-   // роутинг, используем Navigo:
-   const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // начало от корня '/', для ссылок котрые начинаются на "/""
+   // роутинг(марштрутизация), используем Navigo:
+   const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // начало от корня '/', для ссылок котрые начинаются на "/".  С linksSelector перезагруки станицы не происходит
   
 
   router
-   .on("/", () => {         // когда в корне, то вызовется фукния
-      console.log('находимся на главной')
-      new ProductList().mount(new Main().element, [1,2, 3], '');
+   .on("/", async() => {         // когда в корне, то вызовется переданная фукния. Тк getProducts() это всинхронная ф-ия , то коллюэк тоже асинхронный
+      console.log('находимся на главной');
+      const products = await api.getProducts();                         // [{},{},{}]
+      new ProductList().mount(new Main().element, products, '');
    }, 
    {
       // before: (done)=>{  //done-  функция,  ее надо вызывать обязательно
@@ -87,13 +91,25 @@ const init = () => {
          
      }
    })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
-   .on("/category", (obj) => {        
+   .on("/category", () => {        
       console.log('находимся на станице категории')
-      console.log(obj)
+      new ProductList().mount(new Main().element, [1, 2, 3, 4, 5, 6], 'Категрии');  
+   },
+   {
+      leave: (done)=>{
+         console.log('leave ')
+         done();
+      },
    })
    .on("/favorite", () => {        
       console.log('находимся на станице Избранное')
-      new ProductList().mount(new Main().element, [], 'Избранное');
+      new ProductList().mount(new Main().element, [1, 2, 3, 4], 'Избранное');  
+   },
+   {
+      leave: (done)=>{
+         console.log('leave ')
+         done();
+      },
    })
    .on("/search", () => {        
       console.log('находимся на станице Поиска')
@@ -108,10 +124,27 @@ const init = () => {
    .on("/order", (obj) => {        
       console.log('находимся на станице Заказ')
       new Order().mount(new Main().element);  // помещаем Order в Main
-      
    })
    .notFound(() => {
-      document.body.innerHTML = '<h2> Ошибка 40 4</h2>';
+      //document.body.innerHTML = '<h2> Ошибка 40 4</h2>';
+      new Main().element.innerHTML = `
+         <h2> Страница не найдена </h2>
+         <p> Через 5 с вы будете пеернаправлены на <a href="/"> на главную </a> </p>
+      `;
+
+      setTimeout(() => {
+         // new Main().element.innerHTML = '';
+         router.navigate('/');                  // перкходим на гланую '/'
+      }, 5000);
+
+     
+   },
+   {
+      leave: (done)=>{
+         console.log('leave ')
+         new Main().element.innerHTML = '';
+         done();
+      },
    });
 
    

@@ -56,12 +56,17 @@ const init = () => {
    const api = new ApiService();
    console.log('api ', api)
 
+   // роутинг(марштрутизация), используем Navigo:
+   const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // начало от корня '/', для ссылок котрые начинаются на "/".  С linksSelector перезагруки станицы не происходит
+  
+
    new Header().mount();
    new Main().mount();
    new Footer().mount();
 
    api.getProductCategories().then((data) => {
       new Catalog().mount(new Main().element, data);
+      router.updatePageLinks();    
    });
   
    
@@ -69,15 +74,14 @@ const init = () => {
    productSlider(); 
 
 
-   // роутинг(марштрутизация), используем Navigo:
-   const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // начало от корня '/', для ссылок котрые начинаются на "/".  С linksSelector перезагруки станицы не происходит
-  
+   
 
   router
    .on("/", async() => {         // когда в корне, то вызовется переданная фукния. Тк getProducts() это всинхронная ф-ия , то коллюэк тоже асинхронный
       console.log('находимся на главной');
       const products = await api.getProducts();                         // [{},{},{}]
       new ProductList().mount(new Main().element, products, '');
+      router.updatePageLinks();                                         // обновляет ссылки которые есть на странице
    }, 
    {
       // before: (done)=>{  //done-  функция,  ее надо вызывать обязательно
@@ -96,10 +100,12 @@ const init = () => {
          console.log('already ')
       }
    })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
-   .on("/category", async() => {        
+   .on("/category", async({params: {slug}}) => {                        // деструктурировали obj 
+      //console.log('obj ', obj)  
       console.log('находимся на станице категории')
       const products = await api.getProducts(); 
-      new ProductList().mount(new Main().element, products, 'Категрии');  
+      new ProductList().mount(new Main().element, products, slug);  
+      router.updatePageLinks();    
    },
    {
       leave: (done)=>{                       // когда уходим с '/category' страницы, выполнится функция
@@ -112,6 +118,7 @@ const init = () => {
       console.log('находимся на станице Избранное')
       const products = await api.getProducts(); 
       new ProductList().mount(new Main().element, products, 'Избранное');  
+      router.updatePageLinks();    
    },
    {
       leave: (done)=>{

@@ -14,11 +14,11 @@ export class Header {
 
                   this.element = document.createElement('header');  // род элемент
                   this.element.classList.add('header');
-                  this.containerElement = addContainer(this.element, 'header__container');
-                  this.isMounted = false;                                                         // элемент добавлен в разметку    
+                  this.containerElement = addContainer(this.element, 'header__container');        // завели контенйер
+                  this.isMounted = false;                                                         // элемент еще не добавлен в разметку    
             }
            
-            return Header.instance;
+            return Header.instance;                   // венет { element: <header></header>, containerElement: '<div></div>', isMounted: false }
       }
 
 

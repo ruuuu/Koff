@@ -8,6 +8,7 @@ import { Header } from './modules/Header/Header';
 import { Main } from './modules/Main/Main';
 import { Footer } from './modules/Footer/Footer';
 import { Order } from './modules/Order/Order';
+import { ProductList } from './modules/ProductList/ProductList';
 
 
 
@@ -61,19 +62,38 @@ const init = () => {
 
 
    // роутинг, используем Navigo:
-   const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // начало от корня '/', для ссылок котрые начинаются на /
+   const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // начало от корня '/', для ссылок котрые начинаются на "/""
   
 
   router
    .on("/", () => {         // когда в корне, то вызовется фукния
       console.log('находимся на главной')
-   })
+      new ProductList().mount(new Main().element, [1,2, 3], '');
+   }, 
+   {
+      // before: (done)=>{  //done-  функция,  ее надо вызывать обязательно
+      //    console.log('before ')
+      //    done();
+      // },
+      // after: ()=>{
+      //    console.log('after ')
+      // },
+      leave: (done)=>{
+         console.log('leave ')
+         done();
+      },
+      already: ()=>{
+         console.log('already ')
+         
+     }
+   })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
    .on("/category", (obj) => {        
       console.log('находимся на станице категории')
       console.log(obj)
    })
    .on("/favorite", () => {        
       console.log('находимся на станице Избранное')
+      new ProductList().mount(new Main().element, [], 'Избранное');
    })
    .on("/search", () => {        
       console.log('находимся на станице Поиска')
@@ -87,7 +107,7 @@ const init = () => {
    })
    .on("/order", (obj) => {        
       console.log('находимся на станице Заказ')
-      new Order().mount(new Main().element);
+      new Order().mount(new Main().element);  // помещаем Order в Main
       
    })
    .notFound(() => {

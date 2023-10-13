@@ -8,17 +8,16 @@ export class Main {
 
             if(!Main.instance){
                   Main.instance = this; 
-
                   this.element = document.createElement('main');  // род элемент
                   this.isMounted = false;                                                         // элемент добавлен в разметку    
             }
            
-            return Main.instance;
+            return Main.instance;                                                               // вернет этот объект : { element: 'main', isMounted: false }
       }
 
 
       mount(){
-            if(this.isMounted){
+            if(this.isMounted){     // если уже еэлемент добавлен  в разметку
                   return;
             }
 

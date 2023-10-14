@@ -30,7 +30,7 @@
 
       &__image {
             width: 100%;  // если картинка маленькая будет, чтобы она растянулась
-            object-fit: contain;  // cover
+            object-fit: cover;  // contain
             border-radius: 16px;
             aspect-ratio: 7/6;  // размеры картинки 140px / 120px = 7/6
 
@@ -71,7 +71,6 @@
 
 
       &__price {
-
             margin-bottom: 12px;
             @media (min-width: 580px) {
                   font-size: 20px;
@@ -87,9 +86,17 @@
             border-radius: 32px;
             color: #780096;
 
-            @media (min-width: 580px) {
-                 
-            } 
+            &:hover{
+                  color: #fff;
+                  border-color: #9200B7;
+                  background-color: #9200B7;
+            }
+
+            &:active{
+                  color: #C0f;
+                  border-color: #C0f;
+                  background-color: transparent;
+            }
       }
 
 
@@ -97,5 +104,25 @@
             position: absolute;
             top: 12px;
             right: 12px;
+
+            svg{
+                  fill: #ffffff;
+            }
+
+            &:hover, &--active{
+                  color: #780096;
+                 
+                  svg{
+                        fill: #780096;
+                  } 
+            }
+
+            &:active{
+                  color: #c0f;
+                 
+                  svg{
+                        fill: #c0f;
+                  } 
+            }
       }
 }

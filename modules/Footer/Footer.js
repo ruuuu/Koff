@@ -1,5 +1,6 @@
 import logoImg from '/img/logo.svg';
 import { addContainer } from '../addContainer';
+import { Logo } from "../../features/Logo/Logo";
 
 
 export class Footer {
@@ -26,7 +27,7 @@ export class Footer {
                   return;
             }
 
-            const logo = this.getLogo();
+            const logo = new Logo('footer').create();
 
             this.containerElement.append(logo);
 
@@ -43,20 +44,20 @@ export class Footer {
       }
 
 
-      getLogo(){
-            const logo = document.createElement('a');
-            logo.classList.add('footer__link-logo');
-            logo.href = '/';
+      // getLogo(){
+      //       const logo = document.createElement('a');
+      //       logo.classList.add('footer__link-logo');
+      //       logo.href = '/';
 
-            const imgLogo = document.createElement('img');  // либо так  new Image()
-            imgLogo.classList.add('footer__logo');
-            imgLogo.src= logoImg;
-            imgLogo.alt = 'Логотип мебельного маркета Khoff'; 
+      //       const imgLogo = document.createElement('img');  // либо так  new Image()
+      //       imgLogo.classList.add('footer__logo');
+      //       imgLogo.src= logoImg;
+      //       imgLogo.alt = 'Логотип мебельного маркета Khoff'; 
 
-            logo.append(imgLogo);
+      //       logo.append(imgLogo);
 
-            return logo;
-      }
+      //       return logo;
+      // }
 
 
 

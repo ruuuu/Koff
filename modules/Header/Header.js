@@ -1,11 +1,11 @@
 import { addContainer } from "../addContainer";
-import logoImg from '/img/logo.svg';
-
+//import logoImg from '/img/logo.svg';
+import { Logo } from "../../features/Logo/Logo";
 
 
 export class Header {
 
-      static instance = null;
+      static instance = null; 
 
       constructor(){
 
@@ -22,12 +22,14 @@ export class Header {
       }
 
 
+
       mount(){
             if(this.isMounted){
                   return;
             }
 
-            const logo = this.getLogo();
+            const logo = new Logo('header').create();
+            //getLogo('header');
 
             const searchForm = this.getSearchForm();
 
@@ -41,26 +43,12 @@ export class Header {
       }
 
 
+
       unmount(){
             this.element.remove();                              // убираем элемент из разметки
             this.isMounted = false;    
       }
 
-
-      getLogo(){
-            const logo = document.createElement('a');
-            logo.classList.add('header__link-logo');
-            logo.href = '/';
-
-            const imgLogo = document.createElement('img');  // либо так  new Image()
-            imgLogo.classList.add('header__logo');
-            imgLogo.src= logoImg;
-            imgLogo.alt = 'Логотип мебельного маркета Khoff'; 
-
-            logo.append(imgLogo);
-
-            return logo;
-      }
 
 
       getSearchForm(){

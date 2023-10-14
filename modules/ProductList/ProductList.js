@@ -59,10 +59,10 @@ export class  ProductList {
             
             const listElem = document.createElement('ul');
             listElem.classList.add('goods__list');
-            //                            деструткрируем
+            //                            деструткрируем item
             const listItems = data.map(({ id,  images: [image],  name: title,  price }) => {                            // map венет массив элементов [<li></li>, <li></li>]
                   const listItemElem = document.createElement('li');
-                  listItemElem.innerHTML = new Card({ id, image, title, price }).getHTMLTemplateListItem();
+                  listItemElem.append(new Card({ id, image, title, price }).create());
                   listItemElem.classList.add('goods__item');
 
                   return listItemElem;

@@ -1,9 +1,10 @@
+import { likeSvg } from "../likeSvg/likeSvg";
+
 
 
 export class LikeButton {  // кнопка "Добавить в избранное"
 
       constructor(className){
-           
             this.className = className;
       }
 
@@ -17,6 +18,10 @@ export class LikeButton {  // кнопка "Добавить в избранно
             btn.addEventListener('click', () => {
                   console.log('кнопка Добавить в избранное')
             });
+
+
+            btn.innerHTML = likeSvg();
+            
             
             return btn;
       }

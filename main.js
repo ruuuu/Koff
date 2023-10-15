@@ -74,12 +74,11 @@ const init = () => {
    productSlider(); 
 
 
-   
-
   router
    .on("/", async() => {         // когда в корне, то вызовется переданная фукния. Тк getProducts() это всинхронная ф-ия , то коллюэк тоже асинхронный
       console.log('находимся на главной');
       const products = await api.getProducts();                         // [{},{},{}]
+      //console.log('products ', products)
       new ProductList().mount(new Main().element, products, '');
       router.updatePageLinks();                                         // обновляет ссылки которые есть на странице
    }, 
@@ -100,7 +99,7 @@ const init = () => {
          console.log('already ')
       }
    })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
-   .on("/category", async({params: {slug}}) => {                        // деструктурировали obj 
+   .on("/category", async({ params: {slug} }) => {                        // деструктурировали obj 
       //console.log('obj ', obj)  
       console.log('находимся на станице категории')
       const products = await api.getProducts(); 
@@ -151,8 +150,6 @@ const init = () => {
          // new Main().element.innerHTML = '';
          router.navigate('/');                  // перкходим на гланую '/'
       }, 5000);
-
-     
    },
    {
       leave: (done)=>{

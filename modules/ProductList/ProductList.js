@@ -35,7 +35,8 @@ export class  ProductList {
             titleElem.className = title ? 'goods__title' : 'goods__title visually-hidden';
 
             this.containerElement.append(titleElem);
-
+            console.log('data prodicts', data)
+            
             this.updateListElem(data);                            // отрисовка карточек товаров
 
             if(this.isMounted){                                   // если уже элемент добавлен  в разметку
@@ -60,7 +61,7 @@ export class  ProductList {
             const listElem = document.createElement('ul');
             listElem.classList.add('goods__list');
             //                            деструткрируем item
-            const listItems = data.map(({ id,  images: [image],  name: title,  price }) => {                            // map венет массив элементов [<li></li>, <li></li>]
+            const listItems = data.map(({ id,  images: [ image ],  name: title,  price }) => {                            // map венет массив элементов [<li></li>, <li></li>]
                   const listItemElem = document.createElement('li');
                   listItemElem.append(new Card({ id, image, title, price }).create());
                   listItemElem.classList.add('goods__item');
@@ -74,9 +75,6 @@ export class  ProductList {
             this.containerElement.append(listElem);
       }
 
-
-
-      
 
 
       addEvents(){

@@ -116,9 +116,17 @@
                   flex-direction: row;
             }
 
+            svg{
+                  fill: #fff;
+            }
+
             &:hover,
             &:active{
                   color: #780096;
+
+                  svg{
+                        fill: #780096;
+                  }
             }
 
             &:focus-visible{

@@ -1,6 +1,8 @@
 import { addContainer } from "../addContainer";
 //import logoImg from '/img/logo.svg';
 import { Logo } from "../../features/Logo/Logo";
+import { likeSvg } from "../../features/likeSvg/likeSvg";
+
 
 
 export class Header {
@@ -34,7 +36,6 @@ export class Header {
             const searchForm = this.getSearchForm();
 
             const navigation = this.getNavigation();
-
 
             this.containerElement.append(logo, searchForm, navigation);
 
@@ -90,12 +91,24 @@ export class Header {
             const favoriteLink = document.createElement('a');
             favoriteLink.classList.add('header__link');
             favoriteLink.href = '/favorite';
-            favoriteLink.innerHTML = `
-                  <span class="header__link-text">Избранное</span>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8.41301 13.8733C8.18634 13.9533 7.81301 13.9533 7.58634 13.8733C5.65301 13.2133 1.33301 10.46 1.33301 5.79332C1.33301 3.73332 2.99301 2.06665 5.03967 2.06665C6.25301 2.06665 7.32634 2.65332 7.99967 3.55998C8.67301 2.65332 9.75301 2.06665 10.9597 2.06665C13.0063 2.06665 14.6663 3.73332 14.6663 5.79332C14.6663 10.46 10.3463 13.2133 8.41301 13.8733Z" stroke="#1C1C1C" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-            `;
+
+            // 1 ый способ:
+            const favoriteText = document.createElement('span');
+            favoriteText.classList.add('header__link-text');
+            favoriteLink.append(favoriteText);
+            favoriteText.textContent = 'Избранное';
+
+            likeSvg().then((svg) => {                 // ждем ответа(svg) от likeSvg() и затем его обрабатываем
+                  favoriteLink.append(svg);
+            });
+
+            // 2-ой спсоб:
+            // favoriteLink.innerHTML = `
+            //       <span class="header__link-text">Избранное</span>
+            //       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            //             <path d="M8.41301 13.8733C8.18634 13.9533 7.81301 13.9533 7.58634 13.8733C5.65301 13.2133 1.33301 10.46 1.33301 5.79332C1.33301 3.73332 2.99301 2.06665 5.03967 2.06665C6.25301 2.06665 7.32634 2.65332 7.99967 3.55998C8.67301 2.65332 9.75301 2.06665 10.9597 2.06665C13.0063 2.06665 14.6663 3.73332 14.6663 5.79332C14.6663 10.46 10.3463 13.2133 8.41301 13.8733Z" stroke="#1C1C1C" stroke-linecap="round" stroke-linejoin="round"/>
+            //       </svg>
+            // `;
 
 
             const cartLink = document.createElement('a');

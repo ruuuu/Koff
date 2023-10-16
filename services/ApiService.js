@@ -1,5 +1,6 @@
 import { API_URL } from "../const";
 import axios from "axios";
+import { AccessKeyService } from "./StorageService";
 
 
 export class ApiService{
@@ -7,8 +8,9 @@ export class ApiService{
       #apiUrl = API_URL;            // #  используем чтобы скртыть свойство apiUrl
 
       constructor(){
-            this.accessKey = localStorage.getItem('accessKey');
-            console.log('this.accessKey ', this.accessKey);
+            this.accessKeyService = new AccessKeyService('accessKey');                    // { this.key: 'accessKey' }
+            this.accessKey = this.accessKeyService.get();                                 
+            //console.log('this.accessKey ', this.accessKey);
       }
 
 
@@ -17,10 +19,12 @@ export class ApiService{
       async getAccessKey(){
             try{
                   if(!this.accessKey){
+                        // отправк азапрос ана получение ключа доступа:
                         const response = await axios.get(`${this.#apiUrl}api/users/accessKey`);   
                         //console.log('response ', response)
                         this.accessKey = response.data.accessKey;
-                        localStorage.setItem('accessKey', this.accessKey);
+                        //localStorage.setItem('accessKey', this.accessKey);
+                        this.accessKeyService.set(this.accessKey);   // запсиываем в localStorage
                   }
             }
             catch(error){
@@ -51,7 +55,8 @@ export class ApiService{
             catch(error){
                   if(error.response && error.response.data === 401){
                         this.accessKey = null;
-                        localStorage.removeItem('accessKey');
+                        //localStorage.removeItem('accessKey');
+                        this.accessKeyService.delete();                                   // удаляем из  localStorage
 
                         return this.getData(pathname, params);                          // если токен неверный, то еще раз вызываем getData()
                   }

@@ -13,7 +13,7 @@ export class LikeButton {  // кнопка "Добавить в избранно
       create(id){
             const btn = document.createElement('button');
             btn.classList.add(this.className);
-            btn.dataset.id = id;  // устаанвлаиваем дата атрибут data-id
+            btn.dataset.id = id;                            // устанавливаем дата атрибут data-id
 
             btn.addEventListener('click', () => {
                   console.log('кнопка Добавить в избранное')

@@ -7,7 +7,7 @@ import { likeSvg } from "../../features/likeSvg/likeSvg";
 
 export class Header {
 
-      static instance = null; 
+      static instance = null;   // класс Header станет SingleTone
 
       constructor(){
 
@@ -20,7 +20,7 @@ export class Header {
                   this.isMounted = false;                                                         // элемент еще не добавлен в разметку    
             }
            
-            return Header.instance;                   // венет { element: <header></header>, containerElement: '<div></div>', isMounted: false }
+            return Header.instance;                   // вернет объект с этими полями { element: <header></header>, containerElement: '<div></div>', isMounted: false }
       }
 
 

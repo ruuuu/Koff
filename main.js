@@ -11,6 +11,7 @@ import { Order } from './modules/Order/Order';
 import { ProductList } from './modules/ProductList/ProductList';
 import { ApiService } from './services/ApiService';
 import { Catalog } from './modules/Catalog/Catalog';
+import { FavoriteService } from './services/StorageService';
 
 
 
@@ -100,10 +101,10 @@ const init = () => {
       }
    })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
    .on("/category", async({ params: {slug} }) => {                        // деструктурировали obj 
-      //console.log('obj ', obj)  
+
       console.log('находимся на станице категории')
-      const products = await api.getProducts(); 
-      new ProductList().mount(new Main().element, products, slug);  
+      const { data } = await api.getProducts({ category: slug });   // в ответ на запрос придет { data: [{},{},{}], pagination: {} }, берем только data
+      new ProductList().mount(new Main().element, data, slug);  
       router.updatePageLinks();    
    },
    {
@@ -113,10 +114,13 @@ const init = () => {
          done();
       },
    })
-   .on("/favorite", async() => {        
+   .on("/favorite", async() => {             //  при переходе на станицу  /favorite, вызовется колллбэк
       console.log('находимся на станице Избранное')
-      const products = await api.getProducts(); 
-      new ProductList().mount(new Main().element, products, 'Избранное');  
+      const favorite = new FavoriteService().get();
+      const productsFavorite = await api.getProducts({ list: favorite }); 
+      console.log('productsFavorite ', productsFavorite);
+     
+      new ProductList().mount(new Main().element, productsFavorite, 'Избранное', 'Вы ничего не добавили в Избранне');  
       router.updatePageLinks();    
    },
    {

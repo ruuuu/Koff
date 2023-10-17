@@ -22,6 +22,7 @@ export class Footer {
       }
 
 
+
       mount(){
             if(this.isMounted){
                   return;
@@ -38,6 +39,7 @@ export class Footer {
       }
 
 
+      
       unmount(){
             this.element.remove();                              // убираем элемент из разметки
             this.isMounted = false;    

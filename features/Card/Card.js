@@ -16,6 +16,7 @@ export class Card {
       }
 
 
+
       // создание карточки  товара для списка товаров
       create(){
             const article = document.createElement('article');
@@ -28,7 +29,7 @@ export class Card {
 
             const img = document.createElement('img');
             img.classList.add('card__image');
-            console.log('image ', `${this.image}`);
+           // console.log('image ', `${this.image}`);
 
             img.src = `${API_URL}${this.image}`;
             img.alt = this.title;
@@ -60,10 +61,5 @@ export class Card {
 
             return article; 
       }
-
-
-
-     
-     
 
 }

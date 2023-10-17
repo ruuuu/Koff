@@ -25,8 +25,8 @@ export class  ProductList {
       }
 
 
-
-      mount(parent, data, title){                                 // title-h2(Избранное)
+      // emptyText - тектс когда data пустая
+      mount(parent, data, title, emptyText){                                 // title-h2(Избранное)
            
             this.containerElement.textContent = '';               // очищаем контенер 
 
@@ -37,8 +37,15 @@ export class  ProductList {
             this.containerElement.append(titleElem);
             console.log('data prodicts', data)
             
-            this.updateListElem(data);                            // отрисовка карточек товаров
-
+            if(data && data.length){
+                  this.updateListElem(data);                            // отрисовка карточек товаров
+            }
+            else{
+                  this.containerElement.insertAdjacentHTML('beforeend', `
+                        <p class="goods__empty"> ${ emptyText || 'произошла ошибка' } </p>
+                  `) 
+            }
+           
             if(this.isMounted){                                   // если уже элемент добавлен  в разметку
                   return;
             }
@@ -57,11 +64,20 @@ export class  ProductList {
 
 
       updateListElem(data = []){  // массив товаров [{},{},{}], по умолчанию пустой
-            
+            console.log('data in updateListElem ', data)
+
             const listElem = document.createElement('ul');
             listElem.classList.add('goods__list');
-            //                            деструткрируем item
-            const listItems = data.map(({ id,  images: [ image ],  name: title,  price }) => {                            // map венет массив элементов [<li></li>, <li></li>]
+            let dataProd = data;
+
+            if(Array.isArray(data)){      
+                  dataProd = data;
+            }
+            else{
+                  dataProd = data.data; 
+            }
+            //                                    деструткрируем item
+            const listItems = dataProd.map(({ id,  images: [ image ],  name: title,  price }) => {                            // map венет массив элементов [<li></li>, <li></li>]
                   const listItemElem = document.createElement('li');
                   listItemElem.append(new Card({ id, image, title, price }).create());
                   listItemElem.classList.add('goods__item');

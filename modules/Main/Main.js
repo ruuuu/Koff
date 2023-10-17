@@ -16,15 +16,16 @@ export class Main {
       }
 
 
+      
       mount(){
             if(this.isMounted){     // если уже еэлемент добавлен  в разметку
                   return;
             }
 
-            
             document.body.append(this.element);
             this.isMounted = true;    
       }
+
 
 
       unmount(){

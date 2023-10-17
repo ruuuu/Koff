@@ -1,11 +1,13 @@
 import { likeSvg } from "../likeSvg/likeSvg";
+import { FavoriteService } from "../../services/StorageService";
 
 
 
-export class LikeButton {  // кнопка "Добавить в избранное"
+export class LikeButton {  // кнопка "Добавить в избранное"(сердечко)
 
       constructor(className){
             this.className = className;
+            this.favoriteService = new FavoriteService();
       }
 
 
@@ -15,12 +17,24 @@ export class LikeButton {  // кнопка "Добавить в избранно
             btn.classList.add(this.className);
             btn.dataset.id = id;                            // устанавливаем дата атрибут data-id
 
+            if(this.favoriteService.check(id)){
+                  btn.classList.add(`${this.className}--active`);
+            }
+
             btn.addEventListener('click', () => {
-                  console.log('кнопка Добавить в избранное')
+                  //console.log('кнопка Добавить в избранное')
+                  if(this.favoriteService.check(id)){                   // есть ли в this.favoriteService id
+                        this.favoriteService.remove(id);                // удаляем из коллекции(localStorage)
+                        btn.classList.remove(`${this.className}--active`);
+                  }
+                  else{
+                        this.favoriteService.add(id);                         // добавили в коллекцию(localStorage)
+                        btn.classList.add(`${this.className}--active`);
+                  }
             });
 
 
-            likeSvg().then((svg) => {           // ждем ответа(svg) от likeSvg()-асинхронная и затем его обрабатываем
+            likeSvg().then((svg) => {           // ждем ответа(саму svg) от likeSvg()-асинхронная и затем его обрабатываем
                   btn.append(svg);
             });
 

@@ -68,9 +68,14 @@ export class ApiService{
 
 
 
-      async getProducts(page = 1, limit = 12, list, category, q){                // q- для поиска
-
-           const data = await this.getData('api/products',  { page, limit, list, category, q});    // await тк this.getData это асинхронная             
+      //  params = {page = 1, limit = 12, list, category, q}   q- для поиска
+      async getProducts(params = {}){               
+            
+            if(params.list){
+                  params.list = params.list.join(",");                              // получим строку
+                  console.log('params.list ', params.list)                    // 15,40,32,46,49,22,10,35,7
+            }
+           const data = await this.getData('api/products?',  params);    // await тк this.getData это асинхронная             
            return data;          // [{},{},{}]
       }
 

@@ -1,6 +1,4 @@
 
-
-
 export class StorageService{
 
       constructor(key){
@@ -40,16 +38,17 @@ export class StorageService{
 // наследование классов: класс FavoriteService наследуется от класса StorageService, наследуемый класс получает все свойства и методы класса-родителя
 export class FavoriteService extends StorageService{
 
-      static instance;  // класс FavoriteService станет SingleTone
+      static instance;                                      // класс FavoriteService станет SingleTone
       
       constructor(key = 'favorite'){
             if(!FavoriteService.instance){                        //  если объекта еще нет
                   super(key);                                     // вызов класса-родителя
-                  this.favorite = new Set(this.get());             // вызов метода родителя, получили данные из localstorage. this.favorite сделали коллекцией, чтобы иметь уникальные ключи
+                  this.favorite = new Set(this.get());             // коллекция(имеет никальные значения)  {15, 40, 32, 46, 49}, вызов метода родителя, получили данные из localstorage. 
+                  console.log('this.favorite ', this.favorite)
                   FavoriteService.instance = this;
             }
 
-            return FavoriteService.instance;
+            return FavoriteService.instance;                      // { this.key: 'favorite',  this.favorite: {} }
       }
 
 
@@ -58,7 +57,7 @@ export class FavoriteService extends StorageService{
             const data = super.get();
 
             if(data){
-                  const favorite = JSON.parse(data);               // из JSON получаем массив объектов(товаров)
+                  const favorite = JSON.parse(data);               // из JSON получаем массив объектов(товаров) [{}, {}, {}]
                   if(Array.isArray(favorite)){                   // если favorite это массив
                         return favorite;                          // favorite запишется в this.favorite
                   }
@@ -70,19 +69,25 @@ export class FavoriteService extends StorageService{
 
 
       add(value){
-            this.favorite.add(value);     // добавляем value в коллекцию
+            this.favorite.add(value);     // у коллекции  add() добавляеет value в коллекцию
             this.set([...this.favorite]);
       }
 
 
 
       remove(value){  // удаляем value из коллекции
-            if(this.favorite.has(value)){                         // если value  есть в коллекции
-                  this.favorite.delete(value);
+            if(this.check(value)){                        
+                  this.favorite.delete(value);                     // у коллекции  delete() удаляет value из коллекции
                   this.set([...this.favorite]);
                   return true;
-            }
-            
+            }   
+            return false;
+      }
+
+
+
+      check(value){
+           return this.favorite.has(value);           // если value  есть в коллекции
       }
 
 }

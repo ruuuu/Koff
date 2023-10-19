@@ -11,10 +11,10 @@ export class Header {
 
       constructor(){
 
-            if(!Header.instance){
-                  Header.instance = this; 
+            if(!Header.instance){                     // относится к  SingleTone
+                  Header.instance = this;             //  относится к  SingleTone
 
-                  this.element = document.createElement('header');  // род элемент
+                  this.element = document.createElement('header');  // родит элемент
                   this.element.classList.add('header');
                   this.containerElement = addContainer(this.element, 'header__container');        // завели контенйер
                   this.isMounted = false;                                                         // элемент еще не добавлен в разметку    
@@ -25,7 +25,7 @@ export class Header {
 
 
 
-      mount(){
+      mount(){  // создание блока Header
             if(this.isMounted){
                   return;
             }

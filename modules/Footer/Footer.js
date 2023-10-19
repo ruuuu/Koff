@@ -23,7 +23,7 @@ export class Footer {
 
 
 
-      mount(){
+      mount(){                // создание блока Footer
             if(this.isMounted){
                   return;
             }

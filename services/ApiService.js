@@ -3,6 +3,7 @@ import axios from "axios";
 import { AccessKeyService } from "./StorageService";
 
 
+
 export class ApiService{
 
       #apiUrl = API_URL;            // #  используем чтобы скртыть свойство apiUrl
@@ -69,14 +70,15 @@ export class ApiService{
 
 
       //  params = {page = 1, limit = 12, list, category, q}   q- для поиска
-      async getProducts(params = {}){               
+      async getProducts(params = {}){                                               //  по умолчанию пердаем пустой объект         
             
-            if(params.list){
-                  params.list = params.list.join(",");                              // получим строку
-                  console.log('params.list ', params.list)                    // 15,40,32,46,49,22,10,35,7
-            }
+            // if(params.list){
+            //       params.list = params.list.join(",");                         // получим строку  15,40,32,46,49,22,10,35,7
+                          
+            // }
            const data = await this.getData('api/products?',  params);    // await тк this.getData это асинхронная             
-           return data;          // [{},{},{}]
+           console.log('data in getProducts ', data)
+           return data;          // { data: [{},{},{}],  pagination : {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }
       }
 
 

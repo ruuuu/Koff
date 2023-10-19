@@ -12,6 +12,9 @@ import { ProductList } from './modules/ProductList/ProductList';
 import { ApiService } from './services/ApiService';
 import { Catalog } from './modules/Catalog/Catalog';
 import { FavoriteService } from './services/StorageService';
+// import { Pagination } from 'swiper/modules';
+import { Pagination } from './features/Pagination/Pagination';
+
 
 
 
@@ -96,15 +99,22 @@ const init = () => {
          new ProductList().unmount();           // очищаем верстку товаров
          done();
       },
-      already: ()=>{
-         console.log('already ')
+      already: (match)=>{
+         match.route.handler(match); // вызовется  коллбэк которая в /on
       }
    })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
-   .on("/category", async({ params: {slug} }) => {                        // деструктурировали obj 
+   .on("/category", async({ params: {slug} }) => {                        // деструктурировали obj, для урла http://localhost:5173/category?slug=Стулья
 
       console.log('находимся на станице категории')
-      const { data } = await api.getProducts({ category: slug });   // в ответ на запрос придет { data: [{},{},{}], pagination: {} }, берем только data
+      const { data, pagination } = await api.getProducts({ category: slug });   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data
       new ProductList().mount(new Main().element, data, slug);  
+      new Pagination().mount(new ProductList().containerElement);
+      new Pagination().update(pagination);
+      // либо вызов методов через цепочку:
+      // new Pagination()
+      //    .mount(new ProductList().containerElement)
+      //    .update(pagination)
+
       router.updatePageLinks();    
    },
    {
@@ -116,11 +126,9 @@ const init = () => {
    })
    .on("/favorite", async() => {             //  при переходе на станицу  /favorite, вызовется колллбэк
       console.log('находимся на станице Избранное')
-      const favorite = new FavoriteService().get();
-      const productsFavorite = await api.getProducts({ list: favorite }); 
-      console.log('productsFavorite ', productsFavorite);
-     
-      new ProductList().mount(new Main().element, productsFavorite, 'Избранное', 'Вы ничего не добавили в Избранне');  
+      const favorite = new FavoriteService().get();         // коллекция  {15, 40, 32, 46, 49}
+      const { data: product } = await api.getProducts({ list: favorite.join(',') });  // ответ от сервера  { data: [{}, {}, {}],   pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12(товаров на станицу)} }, нам нужно только data и переименовываемм его в product, поэтому пишем { data: product }  
+      new ProductList().mount(new Main().element, product, 'Избранное', 'Вы ничего не добавили в Избранне');  
       router.updatePageLinks();    
    },
    {
@@ -128,6 +136,9 @@ const init = () => {
          new ProductList().unmount(); 
          done();
       },
+      already: (match)=>{
+         match.route.handler(match); // вызовется  коллбэк которая в /favorite
+      }
    })
    .on("/search", () => {        
       console.log('находимся на станице Поиска')

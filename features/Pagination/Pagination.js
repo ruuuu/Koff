@@ -22,12 +22,37 @@ export class Pagination {
             // для задания значения css-переменной(--width) испоьузем setProperty(): 
             this.paginationBar.style.setProperty('--width', `calc(${width < totalProducts ? width : totalProducts} / ${totalProducts} * 100%)`);
 
-            // this.paginationLeft
-            // this.paginationRight
-            
+         
             this.currentPagination.textContent = width < totalProducts ? width : width - limit + (totalProducts % limit);
             
             this.totalPagination.textContent = totalProducts;
+
+            //стрелки влев вправо:
+            const urlLeft = new URL(window.location.href);                    // текущая станица {origin: 'http://localhost:5173', href: "http://localhost:5173/category?slug='Кровати" host: 'localhost:5173', pathname: "/category", search: "?slug='Кровати", searchParams: URLSearchParams {size: 1}}
+            
+            //console.log('urlLeft ', urlLeft);
+            if(currentPage !== 1){
+                  urlLeft.searchParams.set("page", currentPage - 1);          // устанавливаем search параметр page
+                  console.log('urlLeft ', urlLeft);
+                  this.paginationLeft.href = urlLeft.pathname + urlLeft.search;   //category?slug=Диваны&page=2
+            }
+            else{
+                  this.paginationLeft.removeAttribute('href');                // удаляем атрибут href
+            }
+
+
+
+            const urlRight = new URL(window.location.href);                    // текущая станица
+            
+            console.log('urlRight ', urlRight);
+            if(currentPage !== totalPages){                                   //    если не на последней станице 
+                  urlRight.searchParams.set("page", currentPage + 1);          // устанавливаем search параметр page
+                  console.log('urlRight ', urlRight);
+                  this.paginationRight.href = urlRight.pathname + urlRight.search;
+            }
+            else{
+                  this.paginationRight.removeAttribute('href');                // удаляем атрибут href
+            }
 
             
             return this;         // возвращаем объект,  чтобы можно было вызвать методы в main.js через цепочку

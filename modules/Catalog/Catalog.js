@@ -1,6 +1,10 @@
 import { addContainer } from "../addContainer";
+import { ApiService } from "../../services/ApiService";
 
 
+
+
+// список категорий:
 export class Catalog {
 
       static instance = null;
@@ -13,22 +17,37 @@ export class Catalog {
                   this.element.classList.add('catalog'); 
                   this.containerElement = addContainer(this.element, 'catalog__container');        // завели контенйер
                   this.isMounted = false;                                                         // элемент еще не добавлен в разметку 
+                  console.log('catalog object before calling getData() ', Catalog.instance, this)  // { element: nav.catalog, containerElement: div.container.catalog__container, isMounted: false } 
             }
            
-            return Catalog.instance;                                                               // вернет этот объект : { element: 'main', isMounted: false }
+            return Catalog.instance;                                                               // вернет этот объект : { element: 'main',  isMounted: false,  containerElement: '' }
       }
 
 
 
-      mount(parent, data){                      // data= список категрий с сервера 
-            if(this.isMounted){     
+
+      async getData(){
+
+         this.catalogData = await new ApiService().getProductCategories();        //список категрий ["Тумбы", "Стулья", "Столы"...]
+         console.log('catalog object after calling getData() ', Catalog.instance, this)                     // { element: nav.catalog, containerElement: div.container.catalog__container, isMounted: false, catalogData: ['Диваны','Столы','Тумбы'] } 
+      
+      }
+
+
+
+
+      async mount(parent){                      // data= список категрий с сервера  ['','','']
+            if(this.isMounted){      
                   return;
             }
 
-            
-            this.renderListElem(data);                                  // отрисовка категорий
+            if(!this.catalogData){
+                 await this.getData();           // await тк запрос на сервер отправляется и дожидаемся ответа, тогда mount() станвоится async 
+            }
 
-            parent.prepend(this.element);                               // preprend() вставляет элемент в начало родителя
+            this.renderListElem(this.catalogData);                                  // отрисовка категорий
+
+            parent.prepend(this.element);                               // preprend() вставляет элемент в начало родителя, append() вставляет элемент в конец родителя
             this.isMounted = true;    
       }
 

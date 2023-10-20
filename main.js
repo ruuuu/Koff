@@ -21,7 +21,7 @@ import { Pagination } from './features/Pagination/Pagination';
 const productSlider = () => {
 
    Promise.all([   // принимает массив промисов
-      import('swiper/modules'),  
+      import('swiper/modules'),  // вместо верхнего импорта, пишем его здесь
       import('swiper'),
       import('swiper/css'),
    ]).then(([ { Navigation, Thumbs },  Swiper]) => {
@@ -68,11 +68,13 @@ const init = () => {
    new Main().mount();
    new Footer().mount();
 
-   api.getProductCategories().then((data) => {
-      new Catalog().mount(new Main().element, data);
-      router.updatePageLinks();    
-   });
+   // api.getProductCategories().then((data) => {
+   //    new Catalog().mount(new Main().element, data);
+   //    router.updatePageLinks();    
+   // });
   
+
+   
    
 
    productSlider(); 
@@ -81,9 +83,18 @@ const init = () => {
   router
    .on("/", async() => {         // когда в корне, то вызовется переданная фукния. Тк getProducts() это всинхронная ф-ия , то коллюэк тоже асинхронный
       console.log('находимся на главной');
+      new Catalog().mount(new Main().element);
       const products = await api.getProducts();                         // [{},{},{}]
       //console.log('products ', products)
       new ProductList().mount(new Main().element, products, '');
+      
+      // чтоы пагинация оторажалась:
+      // const { data, pagination } = await api.getProducts({ category: slug,  page: page || 1 });   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data
+      // new ProductList().mount(new Main().element, data, slug);  
+      // new Pagination().mount(new ProductList().containerElement);
+      // new Pagination().update(pagination);
+      
+      
       router.updatePageLinks();                                         // обновляет ссылки которые есть на странице
    }, 
    {
@@ -97,16 +108,21 @@ const init = () => {
       leave: (done)=>{                          // когда уходим с '/' страницы, выполнится функция
          console.log('leave ')
          new ProductList().unmount();           // очищаем верстку товаров
+         new Catalog().unmount();               // убираем категории из разметки, тк при переход на Корзину/Заказа их не должно быть
          done();
       },
       already: (match)=>{
-         match.route.handler(match); // вызовется  коллбэк которая в /on
+         match.route.handler(match);            // вызовется  коллбэк которая в /on
       }
    })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
-   .on("/category", async({ params: {slug} }) => {                        // деструктурировали obj, для урла http://localhost:5173/category?slug=Стулья
+   .on("/category", async({ params: { slug, page } }) => {                        // деструктурировали obj, для урла http://localhost:5173/category?slug=Стулья
 
-      console.log('находимся на станице категории')
-      const { data, pagination } = await api.getProducts({ category: slug });   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data
+      console.log('находимся на станице категории') 
+      new Catalog().mount(new Main().element);
+
+      // getProducts() принимает {page = 1, limit = 12, list, category, q}   q- для поиска
+       //                                                               если page нет, то передаем 1
+      const { data, pagination } = await api.getProducts({ category: slug,  page: page || 1 });   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data
       new ProductList().mount(new Main().element, data, slug);  
       new Pagination().mount(new ProductList().containerElement);
       new Pagination().update(pagination);
@@ -115,25 +131,36 @@ const init = () => {
       //    .mount(new ProductList().containerElement)
       //    .update(pagination)
 
-      router.updatePageLinks();    
+      router.updatePageLinks();              // обновляет ссылки которые есть на странице
    },
    {
-      leave: (done)=>{                       // когда уходим с '/category' страницы, выполнится функция
+      leave: (done)=>{                       // когда уходим с страницы '/category', выполнится функция
          console.log('leave ')
          new ProductList().unmount(); 
+         new Catalog().unmount(); 
          done();
       },
    })
    .on("/favorite", async() => {             //  при переходе на станицу  /favorite, вызовется колллбэк
       console.log('находимся на станице Избранное')
+      new Catalog().mount(new Main().element);
       const favorite = new FavoriteService().get();         // коллекция  {15, 40, 32, 46, 49}
       const { data: product } = await api.getProducts({ list: favorite.join(',') });  // ответ от сервера  { data: [{}, {}, {}],   pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12(товаров на станицу)} }, нам нужно только data и переименовываемм его в product, поэтому пишем { data: product }  
-      new ProductList().mount(new Main().element, product, 'Избранное', 'Вы ничего не добавили в Избранне');  
+      new ProductList().mount(new Main().element, product, 'Избранное', 'Вы ничего не добавили в Избранное');  
+      
+      // чтоы пагинация оторажалась:
+      // const { data, pagination } = await api.getProducts({ category: slug,  page: page || 1 });   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data
+      // new ProductList().mount(new Main().element, data, slug);  
+      // new Pagination().mount(new ProductList().containerElement);
+      // new Pagination().update(pagination);
+      
+      
       router.updatePageLinks();    
    },
    {
-      leave: (done)=>{
-         new ProductList().unmount(); 
+      leave: (done)=>{                          // когда уходим со страницы вызовется фунция
+         new Catalog().unmount(); 
+         new ProductList().unmount();           // убираем из рамзетки спсиок товаров
          done();
       },
       already: (match)=>{
@@ -151,7 +178,7 @@ const init = () => {
       console.log('находимся на станице Корзина')
    })
    .on("/order", (obj) => {        
-      console.log('находимся на станице Заказ')
+      console.log('находимся на станице Заказа')
       new Order().mount(new Main().element);  // помещаем Order в Main
    })
    .notFound(() => {
@@ -163,7 +190,7 @@ const init = () => {
 
       setTimeout(() => {
          // new Main().element.innerHTML = '';
-         router.navigate('/');                  // перкходим на гланую '/'
+         router.navigate('/');                  // переходим на главную '/'
       }, 5000);
    },
    {

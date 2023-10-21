@@ -23,7 +23,7 @@ export class Pagination {
             this.paginationBar.style.setProperty('--width', `calc(${width < totalProducts ? width : totalProducts} / ${totalProducts} * 100%)`);
 
          
-            this.currentPagination.textContent = width < totalProducts ? width : width - limit + (totalProducts % limit);
+            this.currentPagination.textContent = totalProducts === limit ? totalProducts : width < totalProducts ? width : width - limit + (totalProducts % limit);
             
             this.totalPagination.textContent = totalProducts;
 
@@ -33,7 +33,7 @@ export class Pagination {
             //console.log('urlLeft ', urlLeft);
             if(currentPage !== 1){
                   urlLeft.searchParams.set("page", currentPage - 1);          // устанавливаем search параметр page
-                  console.log('urlLeft ', urlLeft);
+                  //console.log('urlLeft ', urlLeft);
                   this.paginationLeft.href = urlLeft.pathname + urlLeft.search;   //category?slug=Диваны&page=2
             }
             else{
@@ -47,7 +47,7 @@ export class Pagination {
             console.log('urlRight ', urlRight);
             if(currentPage !== totalPages){                                   //    если не на последней станице 
                   urlRight.searchParams.set("page", currentPage + 1);          // устанавливаем search параметр page
-                  console.log('urlRight ', urlRight);
+                  //console.log('urlRight ', urlRight);
                   this.paginationRight.href = urlRight.pathname + urlRight.search;
             }
             else{
@@ -55,7 +55,7 @@ export class Pagination {
             }
 
             
-            return this;         // возвращаем объект,  чтобы можно было вызвать методы в main.js через цепочку
+            return this;         // возвращаем объект,  чтобы можно было вызвать методы в main.js через цепочку. Если не вызвать через цепочку, то можно не возвращать this
       }
 
 
@@ -115,7 +115,7 @@ export class Pagination {
 
       mount(parent){
             parent.append(this.pagination);
-            return this;             // возвращаем объект,  чтобы можно было вызвать методы в main.js через цепочку
+            return this;             // возвращаем объект,  чтобы можно было вызвать методы в main.js через цепочку.
       }
 
 

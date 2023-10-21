@@ -3,7 +3,7 @@ import { API_URL } from "../../const";
 import { Card } from "../../features/Card/Card";
 
 
-
+// отрисовка списка товаров
 export class  ProductList {
 
       static instance = null;
@@ -23,6 +23,7 @@ export class  ProductList {
            
             return ProductList.instance;
       }
+
 
 
       // emptyText - тектс когда data пустая

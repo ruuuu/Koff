@@ -6,9 +6,7 @@ export const addContainer = (parent, className) => {
             container.classList.add(className);
       }
       
-
       parent.append(container);
 
       return container;
-
 };

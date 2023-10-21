@@ -25,7 +25,7 @@ export class ApiService{
                         //console.log('response ', response)
                         this.accessKey = response.data.accessKey;
                         //localStorage.setItem('accessKey', this.accessKey);
-                        this.accessKeyService.set(this.accessKey);   // запсиываем в localStorage
+                        this.accessKeyService.set(this.accessKey);   // записываем в localStorage
                   }
             }
             catch(error){
@@ -69,7 +69,8 @@ export class ApiService{
 
 
 
-      //  params = {page = 1, limit = 12, list, category, q}   q- для поиска
+
+      // метод принимает объект(json) params = {page = 1, limit = 12, list, category, q}   q- для поиска
       async getProducts(params = {}){                                               //  по умолчанию пердаем пустой объект         
             
             // if(params.list){
@@ -91,7 +92,7 @@ export class ApiService{
 
 
 
-      async getProductCategory(id){               
+      async getProductById(id){               
 
             const data = await this.getData(`api/products/${id}`);        
             return data;          // [{},{},{}]

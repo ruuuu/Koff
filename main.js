@@ -175,17 +175,19 @@ const init = () => {
    })
    .on("/product/:id", async(obj) => {        
       console.log('находимся на станице товара')
+      console.log('obj ', obj)               // obj= { data: {id: '3’},  hashString: "",  params: null, queryString: "", route: {name: 'product/:id', path: 'product/:id', hooks: {…}, handler: ƒ}},  url: "product/3"} }
       new Catalog().mount(new Main().element);
       const data = await api.getProductById(obj.data.id);          // data={articke, categoty, characteristics, id, image, name, price}-товар
       console.log('data of product', data)
-      new BreadCrumbs().mount(new Main().element, [ {text: data.category, href: `category?slug=${data.category}`},  {text: data.title, href: `product/${data.id}`} ]);
+      new BreadCrumbs().mount(new Main().element, [ {text: data.category, href: `category?slug=${data.category}`},  {text: data.name} ]);
       //new ProductCard().mount(new Main().element, data);  
 
    }, 
    {
       leave: (done)=>{                          // когда уходим со страницы '/product/:id' вызовется фунция
-
-         new Catalog().unmount();               // убираем из рамзетки каталог
+         new Catalog().unmount();               // убираем из разметки каталог
+         new BreadCrumbs().unmount(); 
+         new ProductCard().unmount();
          done();
       }
    })

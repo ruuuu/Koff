@@ -25,7 +25,7 @@ export class Footer {
 
       mount(){                // создание блока Footer
             if(this.isMounted){
-                  return;
+                  return;  // дальше  код не пойдет
             }
 
             const logo = new Logo('footer').create();

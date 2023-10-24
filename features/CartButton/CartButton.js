@@ -13,10 +13,10 @@ export class CartButton {  // кнопка "Добавить в корзину"
             const btn = document.createElement('button');
             btn.classList.add(this.className);
             btn.textContent = this.text;
-            btn.dataset.id = id;  // устаанвлаиваем дата атрибут data-id
+            btn.dataset.id = id;          // устаанвлаиваем дата атрибут data-id
 
             btn.addEventListener('click', () => {
-                  console.log('кнопка в корзиеу')
+                  console.log('кнопка в корзину')
             });
             
             return btn;

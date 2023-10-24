@@ -17,8 +17,6 @@ export class  ProductList {
                   this.element.classList.add('goods');
                   this.containerElement = addContainer(this.element, 'goods__container');
                   this.isMounted = false;                                                         // элемент добавлен в разметку    
-                  
-                  this.addEvents();
             }
            
             return ProductList.instance;
@@ -94,8 +92,5 @@ export class  ProductList {
 
 
 
-      addEvents(){
-
-      }
 
 }

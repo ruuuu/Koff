@@ -69,13 +69,13 @@ export class  ProductList {
             listElem.classList.add('goods__list');
             let dataProd = data;
 
-            if(Array.isArray(data)){      
+            if(Array.isArray(data)){     // если data это массив   
                   dataProd = data;
             }
             else{
                   dataProd = data.data; 
             }
-            //                                    деструткрируем item
+            //                                    деструткрируем item,  name(приходит с сервера) переименовали в  title 
             const listItems = dataProd.map(({ id,  images: [ image ],  name: title,  price }) => {                            // map венет массив элементов [<li></li>, <li></li>]
                   const listItemElem = document.createElement('li');
                   listItemElem.append(new Card({ id, image, title, price }).create());

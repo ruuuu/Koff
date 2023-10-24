@@ -1,6 +1,5 @@
 
 import { addContainer } from "../../modules/addContainer";
-import { router } from "../../main";
 import { API_URL } from "../../const";
 
 
@@ -15,21 +14,22 @@ export class ProductCard {
                   ProductCard.instance = this; 
                   this.element = document.createElement('section');
                   this.element.classList.add('product');
-                  this.containerElement = addContainer(this.element, 'container'); 
+                  this.containerElement = addContainer(this.element, 'product__container'); 
                   this.isMounted = false;   
             }
                 
             
-            return ProductCard.instance; 
+            return ProductCard.instance; // this
       }
              
 
 
 
-      mount(parent, data){                      // data = []
+      mount(parent, data){                      //  data= {id, name, category, article, characterictics=[[],[],[]], ..}
+            
             this.render(data);                  // отрисовка секции
-            if(this.isMounted){
-                  return;           // дальнейши код не выполнится
+            if(this.isMounted){      // если секция уже добавлена
+                  return;            // дальнейши код не выполнится
             }
             
             parent.append(this.element);                              
@@ -40,7 +40,7 @@ export class ProductCard {
 
 
       render(data){       // data= {id, name, category, article, characterictics=[[],[],[]], ..}   - товар                 
-            this.containerElement = '';     // сперва очищаем  контенйер
+            this.containerElement.textContent = '';     // сперва очищаем  контенйер
 
             const titleElem = document.createElement('h2');
             titleElem.classList.add('product__title');
@@ -74,8 +74,6 @@ export class ProductCard {
                   return productSlide;
             });
 
-
-
             productMainList.append(...mainSliderItems);  // спред операиор
 
             productSliderMain.append(productMainList);
@@ -101,92 +99,89 @@ export class ProductCard {
                              <path d="M20.136 16.0001L14.4747 10.1821C14.4281 10.1352 14.3913 10.0796 14.3663 10.0183C14.3413 9.95711 14.3288 9.89155 14.3293 9.82544C14.3299 9.75933 14.3435 9.69398 14.3695 9.63318C14.3955 9.57239 14.4332 9.51734 14.4806 9.47124C14.528 9.42513 14.5841 9.38888 14.6455 9.36458C14.707 9.34028 14.7727 9.32842 14.8388 9.32968C14.9049 9.33094 14.9701 9.34529 15.0306 9.37191C15.0912 9.39854 15.1458 9.43689 15.1914 9.48477L21.1914 15.6514C21.2822 15.7448 21.333 15.8699 21.333 16.0001C21.333 16.1303 21.2822 16.2554 21.1914 16.3488L15.1914 22.5154C15.1458 22.5633 15.0912 22.6017 15.0306 22.6283C14.9701 22.6549 14.9049 22.6693 14.8388 22.6705C14.7727 22.6718 14.707 22.6599 14.6455 22.6356C14.5841 22.6113 14.528 22.5751 14.4806 22.529C14.4332 22.4829 14.3955 22.4278 14.3695 22.367C14.3435 22.3062 14.3299 22.2409 14.3293 22.1748C14.3288 22.1087 14.3413 22.0431 14.3663 21.9819C14.3913 21.9207 14.4281 21.865 14.4747 21.8181L20.136 16.0001Z" fill="#1C1C1C"/>
                         </svg>
                   `;   
+
+                  productSliderMain.append(productArrowPrev, productArrowNext);
             
+      
+                  const productSliderThumbnails = document.createElement('div');
+                  productSliderThumbnails.classList.add('swiper', 'product__slider-thumbnails');
+                  
+                  const productThumbnailsList = document.createElement('div');
+                  productThumbnailsList.classList.add('swiper-wrapper', 'product__thumbnails-list');
 
-            productSliderMain.append(productArrowPrev, productArrowNext);
+                  const thumbnailsSliderItems = data.images.map((item) => {  // вернет массив [div,div,div]
+                        const productThumbnailSlide = document.createElement('div');
+                        productThumbnailSlide.classList.add('swiper-slide', 'product__slide-thumbnail');
 
-            const productSliderThumbnails = document.createElement('div');
-            productSliderThumbnails.classList.add('swiper', 'product__slider-thumbnails');
+                        const productImage = document.createElement('img');
+                        productImage.classList.add('product__img-thumbnail');
+                        productImage.src = `${API_URL}${item}`;
+                        productImage.alt = item.name;
+
+                        productThumbnailSlide.append(productImage);
+
+                        return productThumbnailSlide;
+                  });
+
+                  productThumbnailsList.append(...thumbnailsSliderItems);  // спред оператор
+
+                  productPicture.append(productSliderThumbnails);
+            }
             
-            const productThumbnailsList = document.createElement('div');
-            productThumbnailsList.classList.add('swiper-wrapper', 'product__thumbnails-list');
+            const productInfo = document.createElement('div');
+            productInfo.classList.add('product__info');
+            
+            const productPrice = document.createElement('p');
+            productPrice.classList.add('product__price');
+            productPrice.innerHTML = `${data.price.toLocaleString()}&nbsp;Р`;
 
-            const thumbnailsSliderItems = data.images.map((item) => {  // вернет массив [div,div,div]
-                  const productThumbnailSlide = document.createElement('div');
-                  productThumbnailSlide.classList.add('swiper-slide', 'product__slide-thumbnail');
+            const productArticle = document.createElement('p');
+            productArticle.classList.add('product__article');
+            productArticle.textContent = `арт. ${data.article.toLocaleString()}`;
 
-                  const productImage = document.createElement('img');
-                  productImage.classList.add('product__img-thumbnail');
-                  productImage.src = `${API_URL}${item}`;
-                  productImage.alt = item.name;
+            const productCharacteristics = document.createElement('div');
+            productCharacteristics.classList.add('product__characteristics');
 
-                  productThumbnailSlide.append(productImage);
+            const productCharacteristicsTitle = document.createElement('h3');
+            productCharacteristicsTitle.classList.add('product__characteristics-title');
+            productCharacteristicsTitle.textContent = 'Общие характеристки' 
 
-                  return productThumbnailSlide;
+
+            const tableCharacteristics = document.createElement('table');
+            tableCharacteristics.classList.add('product__characteristics-table', 'table');
+
+            // data.characteristics = [["Тип", "Полка"], ["ширина", "см", "118"], ["Глубина", "cм", "342"], ["Высота", "cм", "42"], ["Бренд", "Моби"]]]
+            const characteristicsRows = data.characteristics.map((item) => {
+                  const productCharacteristicsRow  = document.createElement('tr');
+                  productCharacteristicsRow.classList.add('table__row');
+
+                  const productCharacteristicsField = document.createElement('td');
+                  productCharacteristicsField.classList.add('table__field');
+                  productCharacteristicsField.textContent = item[0];
+
+                  const productCharacteristicsValue = document.createElement('td');
+                  productCharacteristicsValue.classList.add('table__value');
+                  productCharacteristicsValue.textContent = item[1];
+
+                  productCharacteristicsRow.append(productCharacteristicsField, productCharacteristicsValue);
+
+                  return productCharacteristicsRow;
             });
 
+            tableCharacteristics.append(...characteristicsRows);
 
+            productCharacteristics.append(productCharacteristicsTitle, tableCharacteristics);
 
-            productThumbnailsList.append(...thumbnailsSliderItems);  // спред оператор
+            const productButtons = document.createElement('div');
+            productButtons.classList.add('product__btns');
+            
+            
+            productInfo.append(productPrice, productArticle, productCharacteristics, productButtons);
 
-            productPicture.append(productSliderThumbnails);
-      }
-
-
-      const productInfo = document.createElement('div');
-      productInfo.classList.add('product__info');
-     
-      const productPrice = document.createElement('p');
-      productPrice.classList.add('product__price');
-      productPrice.innerHTML = `${data.price.toLocaleString()}&nbsp;Р`;
-
-      const productArticle = document.createElement('p');
-      productArticle.classList.add('product__article');
-      productArticle.textContent = `арт. ${data.article.toLocaleString()}`;
-
-      const productCharacteristics = document.createElement('div');
-      productCharacteristics.classList.add('product__characteristics');
-
-      const h3 = document.createElement('h3');
-      h3.classList.add('product__characteristics-title');
-      h3.textContent = 'Общие характеристки' 
-
-
-      const tableCharacteristics = document.createElement('table');
-      tableCharacteristics.classList.add('product__characteristics-table table');
-
-      // data.characteristics = [["Тип", "Полка"], ["ширина", "см", "118"], ["Глубина", "cм", "342"], ["Высота", "cм", "42"], ["Бренд", "Моби"]]]
-      const characteristicsRows = data.characteristics.map((item) => {
-            const productCharacteristicsRow  = document.createElement('tr');
-            productCharacteristicsRow.classList.add('table__row');
-
-            const productCharacteristicsField = document.createElement('td');
-            productCharacteristicsField.classList.add('table__field');
-            productCharacteristicsField.textContent = item[0];
-
-            const productCharacteristicsValue = document.createElement('td');
-            productCharacteristicsValue.classList.add('table__value');
-            productCharacteristicsValue.textContent = item[1];
-
-            productCharacteristicsRow.append(productCharacteristicsField, productCharacteristicsValue);
-
-            return productCharacteristicsRow;
-      })
-
-
-      productCharacteristics.append(h3, characteristicsRows);
-
-      
-
-      
-
-      productCharacteristics.append(h3, tableCharacteristics  )
-      productInfo.append(productPrice, productArticle, productCharacteristics);
-
-      //this.containerElement.append(titleElem,  )
+            this.containerElement.append(titleElem, productPicture, productInfo);
          
+            
       }
-
 
 
 

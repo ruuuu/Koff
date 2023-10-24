@@ -15,7 +15,7 @@ import { FavoriteService } from './services/StorageService';
 // import { Pagination } from 'swiper/modules';
 import { Pagination } from './features/Pagination/Pagination';
 import { BreadCrumbs } from './features/BreadCrumbs/BreadCrumbs';
-
+import { ProductCard } from './modules/ProductCard/ProductCard';
 
 
 
@@ -175,12 +175,12 @@ const init = () => {
    })
    .on("/product/:id", async(obj) => {        
       console.log('находимся на станице товара')
-      console.log('obj ', obj)               // obj= { data: {id: '3’},  hashString: "",  params: null, queryString: "", route: {name: 'product/:id', path: 'product/:id', hooks: {…}, handler: ƒ}},  url: "product/3"} }
+      console.log('obj от страницы товара ', obj)               // obj= { data: {id: '3’},  hashString: "",  params: null, queryString: "", route: {name: 'product/:id', path: 'product/:id', hooks: {…}, handler: ƒ}},  url: "product/3"} }
       new Catalog().mount(new Main().element);
-      const data = await api.getProductById(obj.data.id);          // data={articke, categoty, characteristics, id, image, name, price}-товар
+      const data = await api.getProductById(obj.data.id);          // data= {id, name, category, article, characterictics=[[],[],[]], ..} - товар
       console.log('data of product', data)
       new BreadCrumbs().mount(new Main().element, [ {text: data.category, href: `category?slug=${data.category}`},  {text: data.name} ]);
-      //new ProductCard().mount(new Main().element, data);  
+      new ProductCard().mount(new Main().element, data);   
 
    }, 
    {

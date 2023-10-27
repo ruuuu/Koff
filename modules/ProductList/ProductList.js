@@ -25,7 +25,7 @@ export class  ProductList {
 
 
       // emptyText - тектс когда data пустая
-      mount(parent, data, title, emptyText){                                 // title-h2(Избранное)
+      mount(parent, data, title, emptyText){                                 // title-h2(Избранное/Главная)
            
             this.containerElement.textContent = '';               // очищаем контенер 
 
@@ -45,9 +45,9 @@ export class  ProductList {
                   `) 
             }
            
-            if(this.isMounted){                                   // если уже элемент добавлен  в разметку
-                  return;
-            }
+            // if(this.isMounted){                                   // если уже элемент добавлен  в разметку
+            //       return;
+            // }
 
             parent.append(this.element);
             this.isMounted = true;    

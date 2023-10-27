@@ -2,7 +2,7 @@ import { addContainer } from "../addContainer";
 //import logoImg from '/img/logo.svg';
 import { Logo } from "../../features/Logo/Logo";
 import { likeSvg } from "../../features/likeSvg/likeSvg";
-
+import { router } from "../../main";
 
 
 export class Header {
@@ -52,7 +52,7 @@ export class Header {
 
 
 
-      getSearchForm(){
+      getSearchForm(){  // форма поиска
 
             const searchForm = document.createElement('form');
             searchForm.classList.add('header__search');
@@ -76,6 +76,13 @@ export class Header {
                         <path d="M14.6668 14.6666L13.3335 13.3333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>  
             `;
+
+
+            searchForm.addEventListener('submit', (evt)=>{              // когда нажмем на лупу, форма отправится
+                  evt.preventDefault();                                 // чтобы станца не перезагружаалсь после отправки формы
+                  router.navigate(`/search?q=${input.value}`)           // переходим на /search?q=
+                  
+            })
 
             searchForm.append(input,  button);
 

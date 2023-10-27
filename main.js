@@ -16,40 +16,9 @@ import { FavoriteService } from './services/StorageService';
 import { Pagination } from './features/Pagination/Pagination';
 import { BreadCrumbs } from './features/BreadCrumbs/BreadCrumbs';
 import { ProductCard } from './modules/ProductCard/ProductCard';
+import { productSlider } from './features/ProductSlider/ProductSlider';
 
 
-
-const productSlider = () => {
-
-   Promise.all([   // принимает массив промисов
-      import('swiper/modules'),  // вместо верхнего импорта, пишем его здесь
-      import('swiper'),
-      import('swiper/css'),
-   ]).then(([ { Navigation, Thumbs },  Swiper]) => {
-
-      const swiperThumbnails = new Swiper.default('.product__slider-thumbnails',  // маленкий слайдер
-      {
-           spaceBetween: 10,
-           slidesPerView: 4,
-           freeMode: true,
-           watchSlidesProgress: true
-      });
-
-      const swiper2 = new Swiper.default('.product__slider-main',  // большой слайдер
-      {
-           spaceBetween: 10,
-           navigation: {
-              nextEl: ".product__arrow--next",
-              prevEl: ".product__arrow--prev"
-           },
-           modules: [Navigation, Thumbs],
-           thumbs: {
-              swiper: swiperThumbnails, // указываем маленький слайдер
-           },
-      });
-
-   });
-};
 
 
 
@@ -73,12 +42,6 @@ const init = () => {
    //    new Catalog().mount(new Main().element, data);
    //    router.updatePageLinks();    
    // });
-  
-
-   
-   
-
-   productSlider(); 
 
 
   router
@@ -116,17 +79,15 @@ const init = () => {
          match.route.handler(match);            // это хук, вызовется  коллбэк которая в /on
       }
    })  // метод on() третьим параметром передает хук, хук  вызывается в определенный момент времени
-   .on("/category", async({ params: { slug, page = 1 } }) => {                        // деструктурировали obj, params берет из урла http://localhost:5173/category?slug=Стулья
+   .on("/category", async({ params: { slug, page = 1 } }) => {                        // деструктурировали obj, params берет из урла http://localhost:5173/category?slug=Диваны&page=2
       console.log('находимся на станице /category'); 
       //console.log('params в /category ', params.slug, params.page); 
       new Catalog().mount(new Main().element);                                   // категори орисовываем
-      new BreadCrumbs().mount(new Main().element, [ {text: slug} ]);
+                                                          
+      const { data: products, pagination } = await api.getProducts({ category: slug,  page: page});   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data.  getProducts() принимает {page = 1, limit = 12, list, category, q}   q- для поиска
       
-                                                                     
-      const { data, pagination } = await api.getProducts({ category: slug,  page: page});   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data.  getProducts() принимает {page = 1, limit = 12, list, category, q}   q- для поиска
-      
-      
-      new ProductList().mount(new Main().element, data, slug);  
+      new BreadCrumbs().mount(new Main().element, [ { text: slug } ]);
+      new ProductList().mount(new Main().element, products, slug);  
       new Pagination().mount(new ProductList().containerElement);
       new Pagination().update(pagination);                        //пагинируем
       // либо вызов методов через цепочку:
@@ -139,22 +100,23 @@ const init = () => {
    {
       leave: (done)=>{                       // когда уходим с страницы '/category', выполнится функция
          console.log('leave from /category')
+         new BreadCrumbs().unmount(); 
          new ProductList().unmount(); 
          new Catalog().unmount(); 
-         new BreadCrumbs().unmount(); 
          done();
       },
-   })
-   .on("/favorite", async({ params }) => {             //  при переходе на станицу  /favorite, вызовется колллбэк. params берет из урла /favorite?page=2
-      console.log('находимся на станице Избранное')
-      //console.log(' params в Избранное ',  params)                      // {page: '2'} данные из урла берет
+   })             //         obj = { params }  obj= { data: {},  hashString: "",  params: {page: '2'}, queryString: "page=2"", route: {name: 'favorite', path: 'favorite', hooks: {…}, handler: ƒ},  url: "favorite"} }
+   .on("/favorite", async({ params }) => {             //  при переходе на станицу  /favorite, вызовется колллбэк. Из obj нам нужен только params, поэтому пишем {params}, берется из урла /favorite?page=2
+      //console.log('obj на Избранное ', obj)
+      //console.log('находимся на станице Избранное')
+      //console.log('params в Избранное ',  params)                      // params = {page: '2'} query параметры, данные из урла берет
       new Catalog().mount(new Main().element);
-      const favorite = new FavoriteService().get();         // коллекция  {15, 40, 32, 46, 49}
-      const { data: product, pagination } = await api.getProducts({ list: favorite.join(','),  page: params?.page || 1});  // ответ от сервера  { data: [{}, {}, {}],   pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12(товаров на станицу)} }, нам нужно только data и pagination,  data переименовываемм его в product, поэтому пишем { data: product }  
+      const favorite = new FavoriteService().get();         // коллекция  {15, 40, 32, 46, 49} она хрнаит уникальные значения
+      const { data: product, pagination } = await api.getProducts({ list: favorite.join(','),  page: params?.page || 1});  // ответ от сервера  { data: [{}, {}, {}],   pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12(товаров на станицу)} }, нам нужно только data и pagination, поле data переименовываемм  в product, поэтому пишем { data: product }  
       
-      new BreadCrumbs().mount(new Main().element, [ {text: 'Избранное'} ]);
+      new BreadCrumbs().mount(new Main().element, [ { text: 'Избранное' } ]);
       new ProductList().mount(new Main().element, product, 'Избранное', 'Вы ничего не добавили в Избранное');   
-      new Pagination().mount(new ProductList().containerElement);          // чтоы пагинация оторажалась:
+      new Pagination().mount(new ProductList().containerElement);          // чтоы пагинация оторажалась
       new Pagination().update(pagination);
       router.updatePageLinks();  // обновляет ссылки(встроенный метод router)   
    },
@@ -167,21 +129,41 @@ const init = () => {
          done();
       },
       already: (match)=>{
-         match.route.handler(match);            // вызовется  коллбэк которая в /favorite
+         match.route.handler(match);            // это хук, вызовется  коллбэк которая в /favorite
+      }
+   })                   // obj  взяли только свойтсов params из объекта obj(те деструктириуем), а у params только свойсво q
+   .on("/search", async({ params: { q } }) => {                 // obj = { url: 'search',  queryString: 'q=носки',  params: {q: 'носки'},  hashString: '',  route: {name: 'search',  path: 'search',  hooks: {…}, handler: ƒ},  data: null }           
+      new Catalog().mount(new Main().element);
+     
+      const { data: product, pagination } = await api.getProducts({ q });        // ответ от сервера  { data: [{}, {}, {}],   pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12(товаров на станицу)} }, нам нужно только data и pagination, поле data переименовываемм  в product, поэтому пишем { data: product }  
+      
+      new BreadCrumbs().mount(new Main().element, [ { text: 'Поиск' } ]);
+      new ProductList().mount(new Main().element, product, `Результат поиска: ${q}`, `Товаров не найдено по вашему запросу ${q}`);   
+      new Pagination().mount(new ProductList().containerElement);                // чтоы пагинация оторажалась
+      new Pagination().update(pagination);
+      router.updatePageLinks();  
+   },
+   {
+      leave: (done)=>{                          // когда уходим со страницы '/search' вызовется фунция
+         console.log('leave from search')
+         new BreadCrumbs().unmount(); 
+         new ProductList().unmount();           // убираем из рамзетки спсиок товаров
+         new Catalog().unmount();               // убираем из рамзетки каталог
+         done();
+      },
+      already: (match)=>{
+         match.route.handler(match);            // это хук, вызовется  коллбэк которая в /favorite
       }
    })
-   .on("/search", () => {        
-      console.log('находимся на станице Поиска')
-   })
    .on("/product/:id", async(obj) => {        
-      console.log('находимся на станице товара')
-      console.log('obj от страницы товара ', obj)               // obj= { data: {id: '3’},  hashString: "",  params: null, queryString: "", route: {name: 'product/:id', path: 'product/:id', hooks: {…}, handler: ƒ}},  url: "product/3"} }
+      //console.log('находимся на станице товара')
+      //console.log('obj от страницы товара ', obj)               // obj= { data: {id: '3’},  hashString: "",  params: null, queryString: "", route: {name: 'product/:id', path: 'product/:id', hooks: {…}, handler: ƒ}},  url: "product/3"} }
       new Catalog().mount(new Main().element);
       const data = await api.getProductById(obj.data.id);          // data= {id, name, category, article, characterictics=[[],[],[]], ..} - товар
       console.log('data of product', data)
-      new BreadCrumbs().mount(new Main().element, [ {text: data.category, href: `category?slug=${data.category}`},  {text: data.name} ]);
-      new ProductCard().mount(new Main().element, data);   
-
+      new BreadCrumbs().mount(new Main().element, [ { text: data.category, href: `category?slug=${data.category}` },  { text: data.name } ]);
+      new ProductCard().mount(new Main().element, data);    // отрисовываем картчоку товара
+      productSlider();     // отрисовываем слайдер
    }, 
    {
       leave: (done)=>{                          // когда уходим со страницы '/product/:id' вызовется фунция

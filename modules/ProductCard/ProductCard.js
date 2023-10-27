@@ -1,6 +1,8 @@
 
 import { addContainer } from "../../modules/addContainer";
 import { API_URL } from "../../const";
+import { CartButton } from "../../features/CartButton/CartButton";
+import { LikeButton } from "../../features/LikeButton/LikeButton";
 
 
 // страница товара:
@@ -109,6 +111,8 @@ export class ProductCard {
                   const productThumbnailsList = document.createElement('div');
                   productThumbnailsList.classList.add('swiper-wrapper', 'product__thumbnails-list');
 
+                  productSliderThumbnails.append(productThumbnailsList);
+
                   const thumbnailsSliderItems = data.images.map((item) => {  // вернет массив [div,div,div]
                         const productThumbnailSlide = document.createElement('div');
                         productThumbnailSlide.classList.add('swiper-slide', 'product__slide-thumbnail');
@@ -125,8 +129,11 @@ export class ProductCard {
 
                   productThumbnailsList.append(...thumbnailsSliderItems);  // спред оператор
 
+                  
                   productPicture.append(productSliderThumbnails);
             }
+
+
             
             const productInfo = document.createElement('div');
             productInfo.classList.add('product__info');
@@ -175,6 +182,9 @@ export class ProductCard {
             const productButtons = document.createElement('div');
             productButtons.classList.add('product__btns');
             
+            const productBtn = new CartButton('product__btn', 'В Корзину').create(data.id);
+            const productLike = new LikeButton('product__like').create(data.id);
+            productButtons.append(productBtn, productLike);
             
             productInfo.append(productPrice, productArticle, productCharacteristics, productButtons);
 

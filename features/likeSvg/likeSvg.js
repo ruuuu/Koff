@@ -1,12 +1,18 @@
+let like = null;
 
 
 export const likeSvg = async () => {
 
-      // 1-ый способ:
-      //const likeURL = new URL('./like.svg', import.meta.url); // import.meta.url - путь до текущего каталога
-      const response =  await fetch('/img/like.svg');
-      const svg = await response.text();  
-      return new DOMParser().parseFromString(svg, 'image/svg+xml').querySelector('svg');      // DOMParser указывает формат
+      // чтобы не было много запросов на получение иконки лайка при переходе на спсиок товаров/Избранное:
+      if(!like){
+            // 1-ый способ:
+            //const likeURL = new URL('./like.svg', import.meta.url); // import.meta.url - путь до текущего каталога
+            const response =  await fetch('/img/like.svg');             // запрос на сервер
+            const svg = await response.text();  
+            like = new DOMParser().parseFromString(svg, 'image/svg+xml').querySelector('svg');      // DOMParser указывает формат
+      }
+
+      return like.cloneNode(true);              // чтоыб не была иконка не только у последней карточки товара
 
 
       // 2-ой способ:

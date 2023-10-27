@@ -89,8 +89,5 @@ export class  ProductList {
       
             this.containerElement.append(listElem);
       }
-
-
-
-
+      
 }

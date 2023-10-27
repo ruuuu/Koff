@@ -105,7 +105,7 @@ export class Header {
             favoriteLink.append(favoriteText);
             favoriteText.textContent = 'Избранное';
 
-            likeSvg().then((svg) => {                 // ждем ответа(svg) от likeSvg() и затем его обрабатываем
+            likeSvg().then((svg) => {                 // отправка запроса, ждем ответа(svg) от likeSvg() и затем методом then() его обрабатываем
                   favoriteLink.append(svg);
             });
 

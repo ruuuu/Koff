@@ -87,14 +87,19 @@ const init = () => {
       const { data: products, pagination } = await api.getProducts({ category: slug,  page: page});   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data.  getProducts() принимает {page = 1, limit = 12, list, category, q}   q- для поиска
       
       new BreadCrumbs().mount(new Main().element, [ { text: slug } ]);
-      new ProductList().mount(new Main().element, products, slug);  
-      new Pagination().mount(new ProductList().containerElement);
-      new Pagination().update(pagination);                        //пагинируем
-      // либо вызов методов через цепочку:
-      // new Pagination()
-      //    .mount(new ProductList().containerElement)
-      //    .update(pagination)
+      new ProductList().mount(new Main().element, products, slug);
+      
+      if(pagination.totalProducts > pagination.limit){
+         new Pagination().mount(new ProductList().containerElement);
+         new Pagination().update(pagination);   
+                              // пагинируем
+         // либо вызов методов через цепочку:
+         // new Pagination()
+         //    .mount(new ProductList().containerElement)
+         //    .update(pagination)
 
+      }
+      
       router.updatePageLinks();              // обновляет ссылки которые есть на странице^ (встроенный метод router)   
    },
    {
@@ -105,6 +110,9 @@ const init = () => {
          new Catalog().unmount(); 
          done();
       },
+      already: (match)=>{
+         match.route.handler(match);            // это хук, вызовется  коллбэк которая в /favorite
+      }
    })             //         obj = { params }  obj= { data: {},  hashString: "",  params: {page: '2'}, queryString: "page=2"", route: {name: 'favorite', path: 'favorite', hooks: {…}, handler: ƒ},  url: "favorite"} }
    .on("/favorite", async({ params }) => {             //  при переходе на станицу  /favorite, вызовется колллбэк. Из obj нам нужен только params, поэтому пишем {params}, берется из урла /favorite?page=2
       //console.log('obj на Избранное ', obj)
@@ -115,10 +123,14 @@ const init = () => {
       const { data: product, pagination } = await api.getProducts({ list: favorite.join(','),  page: params?.page || 1});  // ответ от сервера  { data: [{}, {}, {}],   pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12(товаров на станицу)} }, нам нужно только data и pagination, поле data переименовываемм  в product, поэтому пишем { data: product }  
       
       new BreadCrumbs().mount(new Main().element, [ { text: 'Избранное' } ]);
-      new ProductList().mount(new Main().element, product, 'Избранное', 'Вы ничего не добавили в Избранное');   
-      new Pagination().mount(new ProductList().containerElement);          // чтоы пагинация оторажалась
-      new Pagination().update(pagination);
-      router.updatePageLinks();  // обновляет ссылки(встроенный метод router)   
+      new ProductList().mount(new Main().element, product, 'Избранное', 'Вы ничего не добавили в Избранное');
+      
+      if(pagination?.totalProducts > pagination?.limit){                   // если у  объекта pagination есть свойство totalProducts
+         new Pagination().mount(new ProductList().containerElement);          // чтоы пагинация оторажалась
+         new Pagination().update(pagination);
+         router.updatePageLinks();  // обновляет ссылки(встроенный метод router)   
+      }
+
    },
    {
       leave: (done)=>{                          // когда уходим со страницы '/favorite' вызовется фунция
@@ -139,9 +151,13 @@ const init = () => {
       
       new BreadCrumbs().mount(new Main().element, [ { text: 'Поиск' } ]);
       new ProductList().mount(new Main().element, product, `Результат поиска: ${q}`, `Товаров не найдено по вашему запросу ${q}`);   
-      new Pagination().mount(new ProductList().containerElement);                // чтоы пагинация оторажалась
-      new Pagination().update(pagination);
-      router.updatePageLinks();  
+      
+      if(pagination?.totalProducts > pagination?.limit){  
+         new Pagination().mount(new ProductList().containerElement);                // чтоы пагинация оторажалась
+         new Pagination().update(pagination);
+         router.updatePageLinks();    
+      }
+      
    },
    {
       leave: (done)=>{                          // когда уходим со страницы '/search' вызовется фунция
@@ -184,7 +200,7 @@ const init = () => {
       //document.body.innerHTML = '<h2> Ошибка 40 4</h2>';
       new Main().element.innerHTML = `
          <h2> Страница не найдена </h2>
-         <p> Через 5 с вы будете пеернаправлены на <a href="/"> на главную </a> </p>
+         <p> Через 5 с вы будете перенаправлены на <a href="/"> на главную </a> </p>
       `;
 
       setTimeout(() => {

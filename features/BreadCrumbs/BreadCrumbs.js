@@ -16,25 +16,57 @@ export class BreadCrumbs {
                   this.element = document.createElement('div');
                   this.element.classList.add('breadcrumb');
                   this.containerElement = addContainer(this.element, 'container'); 
+                  this.isMounted = false;  // элемент еще не добавлен на страницу
             }
                 
             
             return BreadCrumbs.instance; 
       }
-             
+          
+      
+
+      checkPrevData(data){                // [ {text: 'Поиск'}, {}, {} ]
+            // console.log('data ', data);
+            // console.log('this.prevData ', this.prevData)
+            // console.log('this.prevData === data ', this.prevData === data)
+            let isSame = false;
+            if(!this.prevData){                        // [ {text: 'Поиск'}, {}, {} ]
+                  this.prevData = data;
+            }
+
+      
+            isSame = data.every((item, i) => {                            // mas.every() вернет true/false
+                  return item.text === this.prevData[i].text;                 // если текущйи запрос на отрисовку крошек  одинаков с предыдущим, то вернем isSame = true
+            });
+
+            this.prevData = data;
+            return isSame; 
+      }
 
 
 
       mount(parent, data){                      // data = [ {text: 'Главная',  href: '/'}, {}, {}]
-            this.render(data);                  // отрисовка хлеб крошек
+           
+            // если текущйи запрос на отрисовку крошек  одинаков спредыдущим:
+            if(this.isMounted && this.checkPrevData(data)){                   // data = [ {text: 'Поиск'} ]
+                  return;                                   // перерисовки крошек не будет , выходим из метода
+            }
+
+            if(this.isMounted){
+                  this.render(data);                        // отрисовка хлеб крошек
+                  return;                                   // выходим из метода
+            }
+
+            this.render(data);                        // отрисовка хлеб крошек
             parent.append(this.element);                              
-            router.updatePageLinks();            // обновляет ссылки которые есть на странице(встроенный меод)
+            this.isMounted = true;
+            router.updatePageLinks();            // обновляет ссылки которые есть на странице(встроенный меод       
       }
 
 
 
 
-      render(list){                       // list = [ {text: 'Главная',  href: '/'}, {}, {} ]
+      render(list){                       // list = [ {text: 'Главная',  href: '/'}, {'Избранное', href: '/favorite'}, {'товар',  href: '/product/{id}'} ]
             this.containerElement.textContent = '';   //      очищаем контенйер, тк его перерисовываем
             const listElem = document.createElement('ul');
             listElem.classList.add('breadcrumb__list');
@@ -72,6 +104,7 @@ export class BreadCrumbs {
 
       unmount(){
             this.element.remove();                              // убираем элемент из разметки
+            this.isMounted = false;
       }
       
       // <div class="breadcrumb">

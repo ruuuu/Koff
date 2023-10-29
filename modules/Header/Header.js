@@ -27,7 +27,7 @@ export class Header {
 
       mount(){  // создание блока Header
             if(this.isMounted){
-                  return;
+                  return;  // выход из метода
             }
 
             const logo = new Logo('header').create();

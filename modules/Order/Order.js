@@ -20,7 +20,7 @@ export class Order {
 
       mount(elementMain){
             if(this.isMounted){
-                  return;
+                  return;   // выход из метода
             }
 
            const orderInfo = document.createElement('div');

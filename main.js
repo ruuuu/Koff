@@ -17,7 +17,7 @@ import { Pagination } from './features/Pagination/Pagination';
 import { BreadCrumbs } from './features/BreadCrumbs/BreadCrumbs';
 import { ProductCard } from './modules/ProductCard/ProductCard';
 import { productSlider } from './features/ProductSlider/ProductSlider';
-
+import { Cart } from './modules/Cart/Cart';
 
 
 
@@ -30,7 +30,7 @@ export const router = new Navigo("/", { linksSelector: 'a[href^="/"]' });  // н
 
 const init = () => {
    const api = new ApiService();
-   //console.log('api ', api)
+   console.log('api ', api)
 
    
 
@@ -189,8 +189,12 @@ const init = () => {
          done();
       }
    })
-   .on("/cart", (obj) => {        
+   .on("/cart", async(obj) => { 
+      console.log('obj от страницы Корзина ', obj)              
       console.log('находимся на станице Корзина')
+      const cartItems = await api.getCart();
+      console.log('cartItems ',  cartItems);
+      new Cart().mount(new Main().element,  cartItems, 'Корзина пуста');
    })
    .on("/order", (obj) => {        
       console.log('находимся на станице Заказа')

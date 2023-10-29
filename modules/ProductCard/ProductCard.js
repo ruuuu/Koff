@@ -31,7 +31,7 @@ export class ProductCard {
             
             this.render(data);                  // отрисовка секции
             if(this.isMounted){      // если секция уже добавлена
-                  return;            // дальнейши код не выполнится
+                  return;            // дальнейши код не выполнится // выход из метода
             }
             
             parent.append(this.element);                              

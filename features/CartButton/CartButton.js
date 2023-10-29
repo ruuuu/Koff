@@ -1,3 +1,4 @@
+import { ApiService } from "../../services/ApiService";
 
 
 export class CartButton {  // кнопка "Добавить в корзину"
@@ -16,7 +17,8 @@ export class CartButton {  // кнопка "Добавить в корзину"
             btn.dataset.id = id;          // устаанвлаиваем дата атрибут data-id
 
             btn.addEventListener('click', () => {
-                  console.log('кнопка в корзину')
+                  new ApiService().postProductToCart(id);
+
             });
             
             return btn;

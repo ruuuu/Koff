@@ -19,7 +19,7 @@ export class Main {
       
       mount(){
             if(this.isMounted){     // если уже еэлемент добавлен  в разметку
-                  return;
+                  return;                 // выход из метода
             }
 
             document.body.append(this.element);

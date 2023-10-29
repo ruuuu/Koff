@@ -31,7 +31,7 @@ export class Card {
             img.classList.add('card__image');
            // console.log('image ', `${this.image}`);
 
-            img.src = `${API_URL}${this.image}`;
+            img.src = `${API_URL}/${this.image}`;
             img.alt = this.title;
             link.append(img);
 

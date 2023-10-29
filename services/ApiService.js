@@ -4,7 +4,7 @@ import { AccessKeyService } from "./StorageService";
 
 
 
-export class ApiService{
+export class ApiService {
 
       #apiUrl = API_URL;            // #  используем чтобы скртыть свойство apiUrl
 
@@ -36,7 +36,7 @@ export class ApiService{
 
 
       // метод асинхронный  async, тк идет обращение к серверу:
-      async getData(pathname, params = {}) {
+      async getData(pathname, params = {}) {  // params пумолчанию пустой объект(если не передали)
 
             if(!this.accessKey){
                 await this.getAccessKey();
@@ -77,7 +77,7 @@ export class ApiService{
             //       params.list = params.list.join(",");                         // получим строку  15,40,32,46,49,22,10,35,7
                           
             // }
-           const data = await this.getData('api/products?',  params);         // await тк this.getData это асинхронная             
+           const data = await this.getData('/api/products?',  params);         // await тк this.getData это асинхронная             
            console.log('data in getProducts ', data)
            return data;                                                       // { data: [{},{},{}],  pagination : {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }
       }
@@ -86,7 +86,7 @@ export class ApiService{
 
       async getProductCategories(){               
 
-            const data = await this.getData('api/productCategories');        
+            const data = await this.getData('/api/productCategories');        
             return data;          // список категрий ["Тумбы", "Стулья", "Столы", "Пуфы и банкетки", "Кровати", "Диваны", "Полки", "Стеллажи"]
       }
 
@@ -96,6 +96,120 @@ export class ApiService{
 
             const data = await this.getData(`api/products/${id}`);        
             return data;          // [{},{},{}]
+      }
+
+
+
+     // отправка товара в в Корзину:
+      async postProductToCart (productId, quantity=1){   
+
+            if(!this.accessKey){
+                  await this.getAccessKey();  // запрос на сервер
+            }
+
+            try{
+                  const response  = await axios.post(`${this.#apiUrl}api/cart/products`,       // запрос на сервер                
+                        {
+                              productId,
+                              quantity
+                        },
+                        {
+                              headers: {
+                                    Authorization: `Bearer ${this.accessKey}`
+                              },
+                        }  
+                  );
+
+                  console.log('response.data ', response.data)    // { totalCount: 1, message: 'Товар добавлен в корзину' }
+
+                  return response.data;   
+            }       
+            catch(err){
+                  if (err.response && err.response.status === 401){
+                        this.accessKey = null;
+                        this.accessKeyService.delete();
+                  }
+
+                  console.error(err)
+            }    
+      }
+
+
+
+      // получние товаров из корзины:
+      async getCart(){ 
+
+            const data = await this.getData(`/api/cart`);        
+            return data;
+      }
+
+
+
+      // изменение числа товара в корзине:
+      async changeQuantityProductToCart (productId, quantity){   
+
+            if(!this.accessKey){
+                  await this.getAccessKey();  // запрос на сервер
+            }
+
+            try{
+                  const response  = await axios.put(`${this.#apiUrl}api/cart/products`,       // запрос на сервер                
+                        {
+                              productId,
+                              quantity
+                        },
+                        {
+                              headers: {
+                                    Authorization: `Bearer ${this.accessKey}`
+                              },
+                        }  
+                  );
+
+                  console.log('response.data ', response.data)    // { totalCount: 1, message: 'Товар добавлен в корзину' }
+
+                  return response.data;   
+            }       
+            catch(err){
+                  if (err.response && err.response.status === 401){
+                        this.accessKey = null;
+                        this.accessKeyService.delete();
+                  }
+
+                  console.error(err)
+            }    
+      }
+
+
+
+
+      // удаление товара из корзины:
+      async deleteProductFromCart(id){   
+
+            if(!this.accessKey){
+                  await this.getAccessKey();  // запрос на сервер
+            }
+
+            try{
+                  const response  = await axios.delete(`${this.#apiUrl}/api/cart/products/${id}`,       // запрос на сервер, поэтому фунция асинхронная(async)                
+                        {
+                              headers: {
+                                    Authorization: `Bearer ${this.accessKey}`
+                              },
+                        }  
+                  );
+
+                  console.log('response.data ', response.data)    // { totalCount: 1, message: 'Товар добавлен в корзину' }
+
+                  return response.data;   
+            }       
+            catch(err){
+                  if (err.response && err.response.status === 401){
+                        this.accessKey = null;
+                        this.accessKeyService.delete();
+                  }
+
+                  console.error(err)
+            }            
       }
       
 

@@ -46,7 +46,7 @@ export class  ProductList {
             }
            
             // if(this.isMounted){                                   // если уже элемент добавлен  в разметку
-            //       return;
+            //       return;                                      // выход из метода
             // }
 
             parent.append(this.element);

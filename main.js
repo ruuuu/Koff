@@ -52,6 +52,8 @@ const init = () => {
      
       new ProductList().mount(new Main().element, products, '');
       
+      
+      
       // чтоы пагинация отображалась:
       // const { data, pagination } = await api.getProducts({ page: page || 1 });   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data
       // new ProductList().mount(new Main().element, data);  
@@ -195,6 +197,13 @@ const init = () => {
       const cartItems = await api.getCart();
       console.log('cartItems ',  cartItems);
       new Cart().mount(new Main().element,  cartItems, 'Корзина пуста');
+   },
+   {
+      leave: (done)=>{                          // когда уходим со страницы '/favorite' вызовется фунция
+         console.log('leave from favorite')
+         new Cart().unmount(); 
+         done();
+      }
    })
    .on("/order", (obj) => {        
       console.log('находимся на станице Заказа')

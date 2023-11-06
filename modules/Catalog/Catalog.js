@@ -37,15 +37,13 @@ export class Catalog {
 
       async mount(parent){                      // data= список категрий с сервера  ['','','']
             if(this.isMounted){      
-                  return;
+                  return;  // выход из метода
             }
 
             if(!this.catalogData){
                  await this.getData();           // await тк запрос на сервер отправляется и дожидаемся ответа, тогда mount() станвоится async 
                  this.renderListElem(this.catalogData);                                  // отрисовка категорий
             }
-
-            
 
             parent.prepend(this.element);                               // preprend() вставляет элемент в начало родителя, append() вставляет элемент в конец родителя
             this.isMounted = true;    

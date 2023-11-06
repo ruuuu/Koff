@@ -101,14 +101,14 @@ export class ApiService {
 
 
      // отправка товара в в Корзину:
-      async postProductToCart (productId, quantity=1){   
+      async postProductToCart (productId, quantity = 1){   
 
             if(!this.accessKey){
                   await this.getAccessKey();  // запрос на сервер
             }
 
             try{
-                  const response  = await axios.post(`${this.#apiUrl}api/cart/products`,       // запрос на сервер                
+                  const response  = await axios.post(`${this.#apiUrl}/api/cart/products`,       // запрос на сервер                
                         {
                               productId,
                               quantity
@@ -136,24 +136,24 @@ export class ApiService {
 
 
 
-      // получние товаров из корзины:
+      // получние товаров из Корзины:
       async getCart(){ 
 
             const data = await this.getData(`/api/cart`);        
-            return data;
+            return data;  // [{},{},{}]
       }
 
 
 
-      // изменение числа товара в корзине:
-      async changeQuantityProductToCart (productId, quantity){   
+      // изменение общего числа товара с его id в Корзине:
+      async changeQuantityProductToCart(productId, quantity){   
 
             if(!this.accessKey){
                   await this.getAccessKey();  // запрос на сервер
             }
 
             try{
-                  const response  = await axios.put(`${this.#apiUrl}api/cart/products`,       // запрос на сервер                
+                  const response  = await axios.put(`${this.#apiUrl}/api/cart/products`,       // PUT запрос на сервер                
                         {
                               productId,
                               quantity
@@ -182,7 +182,7 @@ export class ApiService {
 
 
 
-      // удаление товара из корзины:
+      // удаление товара из корзины по его id:
       async deleteProductFromCart(id){   
 
             if(!this.accessKey){

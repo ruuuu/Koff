@@ -100,8 +100,8 @@ export class ApiService {
 
 
 
-     // отправка товара в в Корзину:
-      async postProductToCart (productId, quantity = 1){   
+     // отправка товара в  Корзину:
+      async postProductToCart(productId, quantity = 1){   
 
             if(!this.accessKey){
                   await this.getAccessKey();  // запрос на сервер
@@ -183,7 +183,7 @@ export class ApiService {
 
 
       // удаление товара из корзины по его id:
-      async deleteProductFromCart(id){   
+      async deleteProductFromCart(id){
 
             if(!this.accessKey){
                   await this.getAccessKey();  // запрос на сервер
@@ -210,6 +210,48 @@ export class ApiService {
 
                   console.error(err)
             }            
+      }
+
+
+
+      // отправка заказа на сервер:
+      async postOrder(data){
+
+            if(!this.accessKey){
+                  await this.getAccessKey();  // запрос на сервер
+            }
+
+            try{
+                  const response  = await axios.post(`${this.#apiUrl}/api/orders`,   data,     // запрос на сервер                
+                        {
+                              headers: {
+                                    Authorization: `Bearer ${this.accessKey}`
+                              },
+                        }  
+                  );
+
+                  console.log('response.data order', response.data)    // { totalCount: 1, message: 'Товар добавлен в корзину' }
+
+                  return response.data;   
+            }       
+            catch(err){
+                  if (err.response && err.response.status === 401){
+                        this.accessKey = null;
+                        this.accessKeyService.delete();
+                  }
+
+                  console.error(err)
+            }    
+      }
+
+
+
+
+      // получние инфы о товаре c id:
+      async getOrder(id){ 
+
+            const data = await this.getData(`/api/orders/${id}`);        
+            return data; // {}
       }
       
 

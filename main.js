@@ -38,14 +38,9 @@ const init = () => {
    new Main().mount();
    new Footer().mount();
 
-   // api.getProductCategories().then((data) => {
-   //    new Catalog().mount(new Main().element, data);
-   //    router.updatePageLinks();    
-   // });
-
-
+  
   router
-   .on("/", async( ) => {         // когда в корне, то вызовется переданная фукния. Тк getProducts() это всинхронная ф-ия , то коллюэк тоже асинхронный
+   .on("/", async() => {         // когда в корне, то вызовется переданная фукния. Тк getProducts() это всинхронная ф-ия , то коллюэк тоже асинхронный
       console.log('находимся на главной');
       new Catalog().mount(new Main().element);
       const products = await api.getProducts();
@@ -75,7 +70,7 @@ const init = () => {
          console.log('leave from main /')
          new ProductList().unmount();           // очищаем верстку товаров
          new Catalog().unmount();               // убираем категории из разметки, тк при переход на Корзину/Заказа их не должно быть
-         done();
+         done();                                // эту фукнцию всегда вызываем
       },
       already: (match)=>{
          match.route.handler(match);            // это хук, вызовется  коллбэк которая в /on
@@ -102,7 +97,7 @@ const init = () => {
 
       }
       
-      router.updatePageLinks();              // обновляет ссылки которые есть на странице^ (встроенный метод router)   
+      router.updatePageLinks();              // обновляет ссылки которые есть на странице (updatePageLinks() встроенный метод router)   
    },
    {
       leave: (done)=>{                       // когда уходим с страницы '/category', выполнится функция
@@ -135,14 +130,14 @@ const init = () => {
 
    },
    {
-      leave: (done)=>{                          // когда уходим со страницы '/favorite' вызовется фунция
+      leave: (done) => {                          // когда уходим со страницы '/favorite' вызовется фунция
          console.log('leave from favorite')
          new BreadCrumbs().unmount(); 
          new ProductList().unmount();           // убираем из рамзетки спсиок товаров
          new Catalog().unmount();               // убираем из рамзетки каталог
          done();
       },
-      already: (match)=>{
+      already: (match) => {
          match.route.handler(match);            // это хук, вызовется  коллбэк которая в /favorite
       }
    })                   // obj  взяли только свойтсов params из объекта obj(те деструктириуем), а у params только свойсво q
@@ -159,17 +154,16 @@ const init = () => {
          new Pagination().update(pagination);
          router.updatePageLinks();    
       }
-      
    },
    {
-      leave: (done)=>{                          // когда уходим со страницы '/search' вызовется фунция
+      leave: (done) => {                          // когда уходим со страницы '/search' вызовется фунция
          console.log('leave from search')
          new BreadCrumbs().unmount(); 
          new ProductList().unmount();           // убираем из рамзетки спсиок товаров
          new Catalog().unmount();               // убираем из рамзетки каталог
          done();
       },
-      already: (match)=>{
+      already: (match) => {
          match.route.handler(match);            // это хук, вызовется  коллбэк которая в /favorite
       }
    })
@@ -184,7 +178,7 @@ const init = () => {
       productSlider();     // отрисовываем слайдер
    }, 
    {
-      leave: (done)=>{                          // когда уходим со страницы '/product/:id' вызовется фунция
+      leave: (done) => {                          // когда уходим со страницы '/product/:id' вызовется фунция
          new Catalog().unmount();               // убираем из разметки каталог
          new BreadCrumbs().unmount(); 
          new ProductCard().unmount();
@@ -199,15 +193,19 @@ const init = () => {
       new Cart().mount(new Main().element,  cartItems, 'Корзина пуста');
    },
    {
-      leave: (done)=>{                          // когда уходим со страницы '/favorite' вызовется фунция
+      leave: (done) => {                          // когда уходим со страницы '/favorite' вызовется фунция
          console.log('leave from favorite')
          new Cart().unmount(); 
          done();
-      }
-   })
-   .on("/order", (obj) => {        
-      console.log('находимся на станице Заказа')
-      new Order().mount(new Main().element);  // помещаем Order в Main
+      },
+   })  //              obj = {data: {id}}
+   .on("/order/:id", ({data: { id }}) => {        
+      console.log(`находимся на станице Заказа с номером ${id}`)
+      
+      api.getOrder(id).then((data) => {                  // data- это ответ от сервера и методом then()-асинронный его обрабатываем
+         console.log(`инфа о товаре с ${id}`, data)      // [{ "id": 181, "accessKey": "1aq8qvqguw1fiz8qqy4lh9",  "name": "hyut", "address": null,  "phone": "987654356",  "email": "jhgf@mail.ru",  "deliveryType": "pickup",  "paymentType": "cash",  "products": [ { "quantity": 1, "productId": 49 }, { "quantity": 1,"productId": 32},  { "quantity": 1,  "productId": 36} ],  "totalPrice": "415357", "comments": "апавпва"} ] 
+         new Order().mount(new Main().element, data);          // помещаем Order в Main
+      });
    })
    .notFound(() => {
       //document.body.innerHTML = '<h2> Ошибка 40 4</h2>';

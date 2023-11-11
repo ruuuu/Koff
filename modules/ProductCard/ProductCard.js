@@ -76,7 +76,7 @@ export class ProductCard {
                   return productSlide;
             });
 
-            productMainList.append(...mainSliderItems);  // спред операиор
+            productMainList.append(...mainSliderItems);  // спред оператор
 
             productSliderMain.append(productMainList);
 

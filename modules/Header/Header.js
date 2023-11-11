@@ -25,7 +25,7 @@ export class Header {
 
 
 
-      mount(){  // создание блока Header
+      mount(){  // отрисовка блока Header
             if(this.isMounted){
                   return;  // выход из метода
             }
@@ -52,7 +52,7 @@ export class Header {
 
 
 
-      getSearchForm(){  // форма поиска
+      getSearchForm(){  // отрисовка формы поиска
 
             const searchForm = document.createElement('form');
             searchForm.classList.add('header__search');
@@ -66,7 +66,6 @@ export class Header {
             input.placeholder = 'Введите текст';
 
           
-
             const button = document.createElement('button');
             button.classList.add('header__btn');
             button.type = "submit";
@@ -78,19 +77,20 @@ export class Header {
             `;
 
 
-            searchForm.addEventListener('submit', (evt)=>{              // когда нажмем на лупу, форма отправится
-                  evt.preventDefault();                                 // чтобы станца не перезагружаалсь после отправки формы
-                  router.navigate(`/search?q=${input.value}`)           // переходим на /search?q=
-                  
-            })
-
             searchForm.append(input,  button);
 
+            searchForm.addEventListener('submit', (evt)=>{              // когда нажмем на лупу, форма отправится
+                  evt.preventDefault();                                 // чтобы станца не перезагружаалсь после отправки формы
+                  router.navigate(`/search?q=${input.value}`);           // переходим на /search?q=
+            })
+
+      
             return searchForm;
       }
 
 
-      getNavigation(){
+
+      getNavigation(){  // отрисовка категорий
 
             const navigation = document.createElement('nav');
             navigation.classList.add('header__control');
@@ -154,7 +154,7 @@ export class Header {
 
 
 
-      changeCount(n){  // число товаров в корзине
+      changeCount(n){  // число товаров в корзине для отображения в Header
             this.countElement.textContent = `${n}`;
       }
 

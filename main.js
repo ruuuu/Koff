@@ -79,9 +79,11 @@ const init = () => {
    .on("/category", async({ params: { slug, page = 1 } }) => {                        // деструктурировали obj, params берет из урла http://localhost:5173/category?slug=Диваны&page=2
       console.log('находимся на станице /category'); 
       //console.log('params в /category ', params.slug, params.page); 
-      new Catalog().mount(new Main().element);                                   // категори орисовываем
+      await new Catalog().mount(new Main().element);                                   // категори отрисовываем, ставим  await тк mount() является асинхронным
+      new Catalog().setActiveLink(slug)
+      
                                                           
-      const { data: products, pagination } = await api.getProducts({ category: slug,  page: page});   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data.  getProducts() принимает {page = 1, limit = 12, list, category, q}   q- для поиска
+      const { data: products, pagination } = await api.getProducts({ category: slug,  page: page});   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data и pagination.  getProducts() принимает {page = 1, limit = 12, list, category, q}   q- для поиска
       
       new BreadCrumbs().mount(new Main().element, [ { text: slug } ]);
       new ProductList().mount(new Main().element, products, slug);
@@ -100,7 +102,7 @@ const init = () => {
       router.updatePageLinks();              // обновляет ссылки которые есть на странице (updatePageLinks() встроенный метод router)   
    },
    {
-      leave: (done)=>{                       // когда уходим с страницы '/category', выполнится функция
+      leave: (done) => {                       // когда уходим с страницы '/category', выполнится функция
          console.log('leave from /category')
          new BreadCrumbs().unmount(); 
          new ProductList().unmount(); 
@@ -110,7 +112,7 @@ const init = () => {
       already: (match)=>{
          match.route.handler(match);            // это хук, вызовется  коллбэк которая в /favorite
       }
-   })             //         obj = { params }  obj= { data: {},  hashString: "",  params: {page: '2'}, queryString: "page=2"", route: {name: 'favorite', path: 'favorite', hooks: {…}, handler: ƒ},  url: "favorite"} }
+   })                     // obj = { params }  obj= { data: {},  hashString: "",  params: {page: '2'}, queryString: "page=2"", route: {name: 'favorite', path: 'favorite', hooks: {…}, handler: ƒ},  url: "favorite"} }
    .on("/favorite", async({ params }) => {             //  при переходе на станицу  /favorite, вызовется колллбэк. Из obj нам нужен только params, поэтому пишем {params}, берется из урла /favorite?page=2
       //console.log('obj на Избранное ', obj)
       //console.log('находимся на станице Избранное')
@@ -193,22 +195,30 @@ const init = () => {
       new Cart().mount(new Main().element,  cartItems, 'Корзина пуста');
    },
    {
-      leave: (done) => {                          // когда уходим со страницы '/favorite' вызовется фунция
-         console.log('leave from favorite')
+      leave: (done) => {                          // когда уходим со страницы '/cart' вызовется фунция
+         console.log('leave from Cart')
          new Cart().unmount(); 
          done();
       },
-   })  //              obj = {data: {id}}
-   .on("/order/:id", ({data: { id }}) => {        
+   })  //             obj = { url: 'order/182',  data: {id: '182'}, queryString: '',  hashString: '',  route: {…}}
+   .on("/order/:id", ({ data: { id } }) => {          // дестуртурироваил obj, взяли только data
+      //console.log('obj from order page ', obj)
       console.log(`находимся на станице Заказа с номером ${id}`)
       
       api.getOrder(id).then((data) => {                  // data- это ответ от сервера и методом then()-асинронный его обрабатываем
          console.log(`инфа о товаре с ${id}`, data)      // [{ "id": 181, "accessKey": "1aq8qvqguw1fiz8qqy4lh9",  "name": "hyut", "address": null,  "phone": "987654356",  "email": "jhgf@mail.ru",  "deliveryType": "pickup",  "paymentType": "cash",  "products": [ { "quantity": 1, "productId": 49 }, { "quantity": 1,"productId": 32},  { "quantity": 1,  "productId": 36} ],  "totalPrice": "415357", "comments": "апавпва"} ] 
          new Order().mount(new Main().element, data);          // помещаем Order в Main
       });
+   },
+   {
+      leave: (done) => {                                  // когда уходим со страницы '/order/:id' вызовется фунция
+         console.log('leave from /order/:id')
+         new Order().unmount(); 
+         done();
+      },
    })
    .notFound(() => {
-      //document.body.innerHTML = '<h2> Ошибка 40 4</h2>';
+      //document.body.innerHTML = '<h2> Ошибка 404 </h2>';
       new Main().element.innerHTML = `
          <h2> Страница не найдена </h2>
          <p> Через 5 с вы будете перенаправлены на <a href="/"> на главную </a> </p>
@@ -229,6 +239,10 @@ const init = () => {
 
    
    router.resolve();             // запускаем роутинг
+
+   api.getCart().then((data) => {
+      new Header().changeCount(data.totalCount)
+   });
 
 };
 

@@ -35,7 +35,7 @@ export class ApiService {
 
 
 
-      // метод асинхронный  async, тк идет обращение к серверу:
+      // метод асинхронный  async, тк в нем идет отправка запроса на  сервер:
       async getData(pathname, params = {}) {  // params пумолчанию пустой объект(если не передали)
 
             if(!this.accessKey){
@@ -94,7 +94,8 @@ export class ApiService {
 
       async getProductById(id){               
 
-            const data = await this.getData(`api/products/${id}`);        
+            const data = await this.getData(`api/products/${id}`);   
+            console.log('data from getProductById ', data);   
             return data;          // [{},{},{}]
       }
 

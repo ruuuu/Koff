@@ -17,6 +17,7 @@ export class Catalog {
                   this.element.classList.add('catalog'); 
                   this.containerElement = addContainer(this.element, 'catalog__container');        // завели контенйер
                   this.isMounted = false;                                                         // элемент еще не добавлен в разметку 
+                  this.linksList = [];                      // будет [<a></a>, <a></a>]
                   //console.log('catalog object before calling getData() ', Catalog.instance, this)  // { element: nav.catalog, containerElement: div.container.catalog__container, isMounted: false } 
             }
            
@@ -27,15 +28,15 @@ export class Catalog {
 
 
       async getData(){
-
+         // добавили новое свойство объекту:
          this.catalogData = await new ApiService().getProductCategories();        //список категрий ["Тумбы", "Стулья", "Столы"...]
-         //console.log('catalog object after calling getData() ', Catalog.instance, this)                     // { element: nav.catalog, containerElement: div.container.catalog__container, isMounted: false, catalogData: ['Диваны','Столы','Тумбы'] } 
+         //console.log('catalog object after calling getData() ', Catalog.instance, this)                     // { element: nav.catalog,  containerElement: div.container.catalog__container,  isMounted: false,  catalogData: ['Диваны','Столы','Тумбы'] } 
       }
 
 
 
 
-      async mount(parent){                      // data= список категрий с сервера  ['','','']
+      async mount(parent){                      // data= список категрий с сервера  ['Стулья','Диваны','Кровати']
             if(this.isMounted){      
                   return;  // выход из метода
             }
@@ -66,6 +67,7 @@ export class Catalog {
                   const listItemElem = document.createElement('li');
                   listItemElem.classList.add('catalog__item');
                   const link = document.createElement('a');
+                  this.linksList.push(link);
                   link.classList.add('catalog__link');
                   link.href = `/category?slug=${item}`;
                   link.textContent = item;
@@ -80,6 +82,22 @@ export class Catalog {
             this.containerElement.append(listElem);
       }
 
+
+
+      setActiveLink(slug){
+            //debugger;  // чтобы дебажить
+            const encodedSlug = encodeURIComponent(slug);  // закодировываем
+
+            this.linksList.forEach((link) => {   // перебиаем [a, a, a]
+                  const linkSlug = new URL(link.href).searchParams.get('slug');  // получили значенрие searchParam-ра slug
+                  if(encodeURIComponent(linkSlug) === encodedSlug){
+                        link.classList.add('catalog__link--active');
+                  }
+                  else{
+                        link.classList.remove('catalog__link--active');
+                  }
+            })
+      }
 
 
       

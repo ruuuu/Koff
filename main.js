@@ -242,7 +242,7 @@ const init = () => {
    
    router.resolve();             // запускаем роутинг
 
-   api.getCart().then((data) => {
+   api.getCart().then((data) => {  //  после получения ответа  data от сервера , методоом then() обрабабтывамем ответ
       new Header().changeCount(data.totalCount)
    });
 

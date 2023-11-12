@@ -21,7 +21,7 @@ export class ApiService {
             try{
                   if(!this.accessKey){
                         // отправк азапрос ана получение ключа доступа:
-                        const response = await axios.get(`${this.#apiUrl}api/users/accessKey`);   
+                        const response = await axios.get(`${this.#apiUrl}/api/users/accessKey`);   
                         //console.log('response ', response)
                         this.accessKey = response.data.accessKey;
                         //localStorage.setItem('accessKey', this.accessKey);
@@ -223,7 +223,7 @@ export class ApiService {
             }
 
             try{
-                  const response  = await axios.post(`${this.#apiUrl}/api/orders`,   data,     // запрос на сервер                
+                  const response  = await axios.post(`${this.#apiUrl}/api/orders`, data,     // запрос на сервер                
                         {
                               headers: {
                                     Authorization: `Bearer ${this.accessKey}`

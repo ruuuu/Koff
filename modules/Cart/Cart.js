@@ -3,8 +3,7 @@ import { API_URL } from "../../const";
 import { ApiService } from "../../services/ApiService";
 import { debounce } from "../../helpers";
 import { router } from "../../main";
-import { Main } from "../Main/Main";
-import { Order } from "../Order/Order";
+import { Header } from "../Header/Header";
 
 
 // Корзина:
@@ -22,6 +21,7 @@ export class Cart{
                   this.containerElement = addContainer(this.element, 'cart__container');        // завели контенйер
                   this.isMounted = false;                                                                                // элемент еще не добавлен в разметку    
                   this.debUpdateCart = debounce(this.updateCart.bind(this), 200);    // debounce нужн котгда жмем на кнопку "+"/"-" сразу несколько раз, чтобы вызовов updateCart() несколько не было, а только послдений и в это вызов передаем qanatity равный общему получееному  числу товара                                           
+            
             }
            
             return Cart.instance;                   // вернет объект с этими полями { element: <></>, containerElement: '<div></div>', isMounted: false }
@@ -227,9 +227,9 @@ export class Cart{
             
             cartPlaceWrapper.append(this.cartPlaceCount, this.cartPlacePrice);
 
-            const cartPlaceDelivery = document.createElement('p');
-            cartPlaceDelivery.classList.add('cart__place-delivery');
-            cartPlaceDelivery.textContent = 'Доставка 0 Р';
+            this.cartPlaceDelivery = document.createElement('p');                         // добавили свойство объекту Cart
+            this.cartPlaceDelivery.classList.add('cart__place-delivery');
+            this.cartPlaceDelivery.textContent = 'Доставка 500 Р';
 
             const cartPlaceBtn = document.createElement('button');
             cartPlaceBtn.classList.add('cart__place-btn');
@@ -237,7 +237,7 @@ export class Cart{
             cartPlaceBtn.type = 'submit';
             cartPlaceBtn.setAttribute('form', 'order');  // устанавивает атрибут form='order'
 
-            cartPlaceInfo.append(cartPlaceWrapper, cartPlaceDelivery, cartPlaceBtn);
+            cartPlaceInfo.append(cartPlaceWrapper, this.cartPlaceDelivery, cartPlaceBtn);
             cartPlace.append(subTitle, cartPlaceInfo); 
             this.containerElement.append(cartPlace);
       }
@@ -382,9 +382,10 @@ export class Cart{
                   const data = Object.fromEntries(new FormData(form));        // получаем данные  котрые вбиваем в форму
                   console.log('data form ', data)                             // здесь названия свойств это name у полей формы: { name: 'Алина',  phone: '7654323456',  email: 'tre@mail.ru',  address: 'Москва',  comments: 'текст',  delivetyType: 'delivery',  paymentType: 'pickup' }
                   
-                  const { orderId } = await new ApiService().postOrder(data);   // из объекта { orderId: 181,    message: 'Новый заказ успешно добавлен' } вытащили orderId
+                  const { orderId } = await new ApiService().postOrder(data);   // отправка на сервер,  из объекта { orderId: 181,    message: 'Новый заказ успешно добавлен' } вытащили orderId
                   console.log('result ', result)                                    // { orderId: 181,    message: 'Новый заказ успешно добавлен' }
 
+                  new Header().changeCount(0);                          // обнуляем число товаров у иконки Корзины
                   router.navigate(`/order/${orderId}`);                            // переходим на страницу /order/${orderId}
             });
 

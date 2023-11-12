@@ -32,12 +32,17 @@ const init = () => {
    const api = new ApiService();
    console.log('api ', api)
 
-   
 
    new Header().mount();
    new Main().mount();
    new Footer().mount();
 
+
+   router.hooks({
+      after(){
+         new Catalog().setActiveLink();
+      },
+   })
   
   router
    .on("/", async() => {         // когда в корне, то вызовется переданная фукния. Тк getProducts() это всинхронная ф-ия , то коллюэк тоже асинхронный
@@ -46,15 +51,12 @@ const init = () => {
       const products = await api.getProducts();
      
       new ProductList().mount(new Main().element, products, '');
-      
-      
-      
+   
       // чтоы пагинация отображалась:
       // const { data, pagination } = await api.getProducts({ page: page || 1 });   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data
       // new ProductList().mount(new Main().element, data);  
       // new Pagination().mount(new ProductList().containerElement);
       // new Pagination().update(pagination);
-      
       
       router.updatePageLinks();                                         // обновляет ссылки которые есть на странице
    }, 
@@ -80,9 +82,8 @@ const init = () => {
       console.log('находимся на станице /category'); 
       //console.log('params в /category ', params.slug, params.page); 
       await new Catalog().mount(new Main().element);                                   // категори отрисовываем, ставим  await тк mount() является асинхронным
-      new Catalog().setActiveLink(slug)
-      
-                                                          
+      new Catalog().setActiveLink(slug);
+                                                
       const { data: products, pagination } = await api.getProducts({ category: slug,  page: page});   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data и pagination.  getProducts() принимает {page = 1, limit = 12, list, category, q}   q- для поиска
       
       new BreadCrumbs().mount(new Main().element, [ { text: slug } ]);
@@ -109,7 +110,7 @@ const init = () => {
          new Catalog().unmount(); 
          done();
       },
-      already: (match)=>{
+      already: (match) => {
          match.route.handler(match);            // это хук, вызовется  коллбэк которая в /favorite
       }
    })                     // obj = { params }  obj= { data: {},  hashString: "",  params: {page: '2'}, queryString: "page=2"", route: {name: 'favorite', path: 'favorite', hooks: {…}, handler: ƒ},  url: "favorite"} }
@@ -118,8 +119,8 @@ const init = () => {
       //console.log('находимся на станице Избранное')
       //console.log('params в Избранное ',  params)                      // params = {page: '2'} query параметры, данные из урла берет
       new Catalog().mount(new Main().element);
-      const favorite = new FavoriteService().get();         // коллекция  {15, 40, 32, 46, 49} она хрнаит уникальные значения
-      const { data: product, pagination } = await api.getProducts({ list: favorite.join(','),  page: params?.page || 1});  // ответ от сервера  { data: [{}, {}, {}],   pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12(товаров на станицу)} }, нам нужно только data и pagination, поле data переименовываемм  в product, поэтому пишем { data: product }  
+      const favorite = new FavoriteService().get();         // коллекция  {15, 40, 32, 46, 49} она хрнаит уникальные значения(у нас это id товаров)
+      const { data: product, pagination } = await api.getProducts({ list: favorite.join(','),  page: params?.page || 1});         // ответ от сервера  { data: [{}, {}, {}],   pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12(товаров на станицу)} }, нам нужно только data и pagination, поле data переименовываемм  в product, поэтому пишем { data: product }  
       
       new BreadCrumbs().mount(new Main().element, [ { text: 'Избранное' } ]);
       new ProductList().mount(new Main().element, product, 'Избранное', 'Вы ничего не добавили в Избранное');
@@ -127,9 +128,9 @@ const init = () => {
       if(pagination?.totalProducts > pagination?.limit){                   // если у  объекта pagination есть свойство totalProducts
          new Pagination().mount(new ProductList().containerElement);          // чтоы пагинация оторажалась
          new Pagination().update(pagination);
-         router.updatePageLinks();  // обновляет ссылки(встроенный метод router)   
       }
 
+      router.updatePageLinks();  // обновляет ссылки(встроенный метод router)   
    },
    {
       leave: (done) => {                          // когда уходим со страницы '/favorite' вызовется фунция
@@ -153,9 +154,10 @@ const init = () => {
       
       if(pagination?.totalProducts > pagination?.limit){  
          new Pagination().mount(new ProductList().containerElement);                // чтоы пагинация оторажалась
-         new Pagination().update(pagination);
-         router.updatePageLinks();    
+         new Pagination().update(pagination); 
       }
+
+      router.updatePageLinks();   
    },
    {
       leave: (done) => {                          // когда уходим со страницы '/search' вызовется фунция
@@ -175,7 +177,7 @@ const init = () => {
       new Catalog().mount(new Main().element);
       const data = await api.getProductById(obj.data.id);          // data= {id, name, category, article, characterictics=[[],[],[]], ..} - товар
       console.log('data of product', data)
-      new BreadCrumbs().mount(new Main().element, [ { text: data.category, href: `category?slug=${data.category}` },  { text: data.name } ]);
+      new BreadCrumbs().mount(new Main().element, [ { text: data.category, href: `/category?slug=${data.category}` },  { text: data.name } ]);
       new ProductCard().mount(new Main().element, data);    // отрисовываем картчоку товара
       productSlider();     // отрисовываем слайдер
    }, 
@@ -201,14 +203,14 @@ const init = () => {
          done();
       },
    })  //             obj = { url: 'order/182',  data: {id: '182'}, queryString: '',  hashString: '',  route: {…}}
-   .on("/order/:id", ({ data: { id } }) => {          // дестуртурироваил obj, взяли только data
+   .on("/order/:id", async({ data: { id } }) => {          // дестуртурироваил obj, взяли только data
       //console.log('obj from order page ', obj)
-      console.log(`находимся на станице Заказа с номером ${id}`)
+      console.log(`находимся на станице Заказа с номером ${id}`)  
       
-      api.getOrder(id).then((data) => {                  // data- это ответ от сервера и методом then()-асинронный его обрабатываем
-         console.log(`инфа о товаре с ${id}`, data)      // [{ "id": 181, "accessKey": "1aq8qvqguw1fiz8qqy4lh9",  "name": "hyut", "address": null,  "phone": "987654356",  "email": "jhgf@mail.ru",  "deliveryType": "pickup",  "paymentType": "cash",  "products": [ { "quantity": 1, "productId": 49 }, { "quantity": 1,"productId": 32},  { "quantity": 1,  "productId": 36} ],  "totalPrice": "415357", "comments": "апавпва"} ] 
-         new Order().mount(new Main().element, data);          // помещаем Order в Main
-      });
+      const [order] = await api.getOrder(id);            //   ответ от сервера  [{order},{order},{}]
+      //console.log('await api.getOrder(id) ', await api.getOrder(id))
+      // console.log(`инфа о товаре с ${id}`, order)      // [{ "id": 181, "accessKey": "1aq8qvqguw1fiz8qqy4lh9",  "name": "hyut", "address": null,  "phone": "987654356",  "email": "jhgf@mail.ru",  "deliveryType": "pickup",  "paymentType": "cash",  "products": [ { "quantity": 1, "productId": 49 }, { "quantity": 1,"productId": 32},  { "quantity": 1,  "productId": 36} ],  "totalPrice": "415357", "comments": "апавпва"} ] 
+      new Order().mount(new Main().element, order);          // помещаем Order в Main
    },
    {
       leave: (done) => {                                  // когда уходим со страницы '/order/:id' вызовется фунция

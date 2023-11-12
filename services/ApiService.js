@@ -94,7 +94,7 @@ export class ApiService {
 
       async getProductById(id){               
 
-            const data = await this.getData(`api/products/${id}`);   
+            const data = await this.getData(`/api/products/${id}`);   
             console.log('data from getProductById ', data);   
             return data;          // [{},{},{}]
       }

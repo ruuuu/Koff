@@ -17,8 +17,12 @@ export class Catalog {
                   this.element.classList.add('catalog'); 
                   this.containerElement = addContainer(this.element, 'catalog__container');        // завели контенйер
                   this.isMounted = false;                                                         // элемент еще не добавлен в разметку 
-                  this.linksList = [];                      // будет [<a></a>, <a></a>]
+                  this.listElem = document.createElement('ul');                     // список для категорий
+                  this.listElem.classList.add('catalog__list');
+                  this.containerElement.append(this.listElem);
                   //console.log('catalog object before calling getData() ', Catalog.instance, this)  // { element: nav.catalog, containerElement: div.container.catalog__container, isMounted: false } 
+                  this.linksList = [];                                        // будет [<a></a>, <a></a>]
+
             }
            
             return Catalog.instance;                                                               // вернет этот объект : { element: 'main',  isMounted: false,  containerElement: '' }
@@ -60,8 +64,8 @@ export class Catalog {
 
 
       renderListElem(data){
-            const listElem = document.createElement('ul');
-            listElem.classList.add('catalog__list');
+          
+            this.listElem.textContent = ''; //  очищаем сперва
 
             const listItems = data.map((item) => {                            
                   const listItemElem = document.createElement('li');
@@ -77,9 +81,7 @@ export class Catalog {
                   return listItemElem;
             });
 
-            listElem.append(...listItems);
-      
-            this.containerElement.append(listElem);
+            this.listElem.append(...listItems); 
       }
 
 

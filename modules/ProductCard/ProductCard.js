@@ -19,7 +19,6 @@ export class ProductCard {
                   this.containerElement = addContainer(this.element, 'product__container'); 
                   this.isMounted = false;   
             }
-                
             
             return ProductCard.instance; // this
       }
@@ -28,7 +27,6 @@ export class ProductCard {
 
 
       mount(parent, data){                      //  data= {id, name, category, article, characterictics=[[],[],[]], ..}
-            
             this.render(data);                  // отрисовка секции
             if(this.isMounted){      // если секция уже добавлена
                   return;            // дальнейши код не выполнится // выход из метода
@@ -68,7 +66,7 @@ export class ProductCard {
 
                   const productImage = document.createElement('img');
                   productImage.classList.add('product__image');
-                  productImage.src = `${API_URL}${item}`;
+                  productImage.src = `${API_URL}/${item}`;
                   productImage.alt = item.name;
 
                   productSlide.append(productImage);
@@ -119,7 +117,7 @@ export class ProductCard {
 
                         const productImage = document.createElement('img');
                         productImage.classList.add('product__img-thumbnail');
-                        productImage.src = `${API_URL}${item}`;
+                        productImage.src = `${API_URL}/${item}`;
                         productImage.alt = item.name;
 
                         productThumbnailSlide.append(productImage);

@@ -1,3 +1,5 @@
+import { addContainer } from "../addContainer";
+
 
 
 export class Order {
@@ -8,10 +10,21 @@ export class Order {
 
             if(!Order.instance){
                   Order.instance = this; 
-
                   this.element = document.createElement('section');  // род элемент
+                  this.containerElement = addContainer(this.element, 'order__container');
                   this.element.classList.add('order');
-                  this.isMounted = false;                                                         // элемент добавлен в разметку    
+                  this.isMounted = false;                                                         // элемент пока не добавлен в разметку    
+                  
+                  this.deliveryTypeList  = {
+                        "delivery": "Доставка",
+                        "pickup": "Самовывоз"
+                  };
+
+                  this.paymentTypeList  = {
+                        "card": "Картой при получении",
+                        "cash": "Наличными при получении"
+                  };
+                  
             }
            
             return Order.instance;
@@ -19,33 +32,15 @@ export class Order {
 
 
 
-      mount(elementMain, dataOrder){
+      mount(parent, dataOrder){  // parent-блок  Main
+
+            this.render(dataOrder);
+
             if(this.isMounted){
                   return;   // выход из метода
             }
 
-            const orderInfo = document.createElement('div');
-            orderInfo.classList.add('order__info');
-           
-            const orderWrapper = this.getWrapper(dataOrder);
-
-            const orderPrice = document.createElement('p');
-            orderPrice.classList.add('order__article');
-            orderPrice.textContent = `№${dataOrder[0].id}`;
-
-          
-            const orderCharacteristics = this.getOrderCharacteristics(dataOrder);
-
-            const button = document.createElement('button');
-            button.classList.add('product__btn', 'order__btn');
-            button.type = 'button';
-            button.textContent = 'На главную';
-
-            orderInfo.append(orderWrapper, orderPrice, orderCharacteristics, button);
-
-            this.element.append(orderInfo)
-            elementMain.append(this.element);
-           
+            parent.append(this.element);
             this.isMounted = true;    
       }
 
@@ -57,121 +52,60 @@ export class Order {
       }
 
 
-      getWrapper(dataOrder){
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('order__wrapper');
-            
-            const h3 = document.createElement('h3');
-            h3.classList.add('order__title');
-            h3.textContent = 'Заказ успешно размещен';
 
-            const p = document.createElement('p');
-            p.classList.add('order__price');
-            p.innerHTML = `${dataOrder[0].totalPrice}&nbsp;P`; 
+      render(dataOrder){                  // dataOrder = [{ "id": 181, "accessKey": "1aq8qvqguw1fiz8qqy4lh9",  "name": "hyut", "address": null,  "phone": "987654356",  "email": "jhgf@mail.ru",  "deliveryType": "pickup",  "paymentType": "cash",  "products": [ { "quantity": 1, "productId": 49 }, { "quantity": 1,"productId": 32},  { "quantity": 1,  "productId": 36} ],  "totalPrice": "415357", "comments": "апавпва"} ] 
+          const totalPrice = parseInt(dataOrder.totalPrice) + (dataOrder.deliveryType === "delivery" ? 500 : 0);
+      
+          this.containerElement.innerHTML = `
+            <div class="order__info">
+              <div class="order__wrapper">
+                <h2 class="order__title"> Заказ успешно размещен </h2>
+                <p class="order__price"> ${totalPrice.toLocaleString()} ₽ </p>
+              </div>
+      
+              <p class="order__article"> №${dataOrder.id} </p>
+      
+              <div class="order__characteristics">
+                <h3 class="order__characteristics-title"> Данные доставки </h3>
+                <table class="order__characteristics-table table">
+                  <tr class="table__row">
+                    <td class="table__field"> Получатель </td>
+                    <td class="table__value"> ${dataOrder.name} </td>
+                  </tr>
 
-            wrapper.append(h3, p);
+                  <tr class="table__row">
+                    <td class="table__field"> Телефон </td>
+                    <td class="table__value"> ${dataOrder.phone} </td>
+                  </tr>
 
-            return wrapper;
+                  <tr class="table__row">
+                    <td class="table__field"> E-mail </td>
+                    <td class="table__value"> ${dataOrder.email} </td>
+                  </tr>
+
+                  ${dataOrder.address ?
+                      `<tr class="table__row">
+                          <td class="table__field"> Адрес доставки </td>
+                          <td class="table__value"> ${dataOrder.address} </td>
+                        </tr>`
+                      : "" }
+
+                  <tr class="table__row">
+                    <td class="table__field"> Способ оплаты </td>
+                    <td class="table__value"> ${this.paymentTypeList[dataOrder.paymentType]} </td>
+                  </tr>
+
+                  <tr class="table__row">
+                    <td class="table__field"> Способ получения </td>
+                    <td class="table__value"> ${this.deliveryTypeList[dataOrder.deliveryType]} </td>
+                  </tr>
+                </table>
+              </div>
+      
+              <a class="product__btn order__btn" href="/"> На главную </a>
+            </div>
+          `;
       }
-
-
-
-      getOrderCharacteristics(dataOrder){
-            const characteristics = document.createElement('div');
-            characteristics.classList.add('order__characteristics');
-
-
-            const h3 = document.createElement('h3');
-            h3.classList.add('order__characteristics-title');
-           
-            const table = document.createElement('table');
-            table.classList.add('order__characteristics-table', 'table');
-
-
-            const tr1 = document.createElement('tr');
-            tr1.classList.add('table__row');
-
-            const tdField1 = document.createElement('td');
-            tdField1.classList.add('table__field');
-            tdField1.textContent = 'Получатель';
-
-            const tdValue1 = document.createElement('td');
-            tdValue1.classList.add('table__value');
-            tdValue1.textContent = dataOrder[0].name;
-
-
-            const tr2 = document.createElement('tr');
-            tr2.classList.add('table__row');
-
-            const tdField2 = document.createElement('td');
-            tdField2.classList.add('table__field');
-            tdField2.textContent = 'Телефон';
-
-            const tdValue2 = document.createElement('td');
-            tdValue2.classList.add('table__value');
-            tdValue2.textContent = dataOrder[0].phone;
-
-
-            const tr3 = document.createElement('tr');
-            tr3.classList.add('table__row');
-
-            const tdField3 = document.createElement('td');
-            tdField3.classList.add('table__field');
-            tdField3.textContent = 'Email';
-
-            const tdValue3 = document.createElement('td');
-            tdValue3.classList.add('table__value');
-            tdValue3.textContent = dataOrder[0].email;
-
-
-            const tr4 = document.createElement('tr');
-            tr4.classList.add('table__row');
-
-            const tdField4 = document.createElement('td');
-            tdField4.classList.add('table__field');
-            tdField4.textContent = 'Адрес доставки';
-
-            const tdValue4 = document.createElement('td');
-            tdValue4.classList.add('table__value');
-            tdValue4.textContent = `${dataOrder[0].address ? dataOrder[0].address : ''}`;
-
-
-            const tr5 = document.createElement('tr');
-            tr5.classList.add('table__row');
-
-            const tdField5 = document.createElement('td');
-            tdField5.classList.add('table__field');
-            tdField5.textContent = 'Способ оплаты';
-
-            const tdValue5 = document.createElement('td');
-            tdValue5.classList.add('table__value');
-            tdValue5.textContent = `${dataOrder[0].paymentType === 'cash' ? 'Наличными': 'Картой'}`; 
-
-
-            const tr6 = document.createElement('tr');
-            tr6.classList.add('table__row');
-
-            const tdField6 = document.createElement('td');
-            tdField6.classList.add('table__field');
-            tdField6.textContent = 'Способ получения';
-
-            const tdValue6 = document.createElement('td');
-            tdValue6.classList.add('table__value');
-            tdValue6.textContent = `${dataOrder[0].deliveryType === 'pickup' ? 'Самовывоз': 'Доставка'}`;
-
-
-            tr1.append(tdField1, tdValue1); 
-            tr2.append(tdField2, tdValue2); 
-            tr3.append(tdField3, tdValue3); 
-            tr4.append(tdField4, tdValue4); 
-            tr5.append(tdField5, tdValue5); 
-            tr6.append(tdField6, tdValue6); 
-
-            table.append(tr1, tr2, tr3, tr4, tr5, tr6); 
-            characteristics.append(h3, table);
-
-            return characteristics;
-      }
-
+  
 }
 

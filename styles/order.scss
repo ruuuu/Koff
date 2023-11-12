@@ -85,8 +85,7 @@
 
 
       &__characteristics-title {
-            font-size: 16px;
-            
+            font-size: 16px;  
       }
 
 
@@ -95,10 +94,13 @@
             margin-bottom: 24px;
       }
 
+
+
       &__btn{
+            display: block;    
             max-width: 408px;
             width: 100%;
-           
+            text-align: center;
       }
 
 }

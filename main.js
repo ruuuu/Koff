@@ -50,7 +50,7 @@ const init = () => {
       new Catalog().mount(new Main().element);
       const products = await api.getProducts();
      
-      new ProductList().mount(new Main().element, products, '');
+      new ProductList().mount(new Main().element, products); // '' - третий параметр
    
       // чтоы пагинация отображалась:
       // const { data, pagination } = await api.getProducts({ page: page || 1 });   // в ответ на запрос придет { data: [{},{},{}],  pagination: {currentPage: 1, totalPages: 1, totalProducts: 1, limit: 12} }, берем только data
@@ -61,11 +61,11 @@ const init = () => {
       router.updatePageLinks();                                         // обновляет ссылки которые есть на странице
    }, 
    {
-      // before: (done)=>{  //done-  функция,  ее надо вызывать обязательно
+      // before: (done)=>{  // это хук, done-  функция,  ее надо вызывать обязательно
       //    console.log('before ')
       //    done();
       // },
-      // after: ()=>{
+      // after: ()=>{  // хук
       //    console.log('after ')
       // },
       leave: (done)=>{                          // это хук, когда уходим с '/' страницы, выполнится функция

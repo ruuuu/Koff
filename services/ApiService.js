@@ -20,7 +20,7 @@ export class ApiService {
       async getAccessKey(){
             try{
                   if(!this.accessKey){
-                        // отправк азапрос ана получение ключа доступа:
+                        // отправка запроса на получение ключа доступа:
                         const response = await axios.get(`${this.#apiUrl}/api/users/accessKey`);   
                         //console.log('response ', response)
                         this.accessKey = response.data.accessKey;
@@ -36,7 +36,7 @@ export class ApiService {
 
 
       // метод асинхронный  async, тк в нем идет отправка запроса на  сервер:
-      async getData(pathname, params = {}) {  // params пумолчанию пустой объект(если не передали)
+      async getData(pathname, params = {}) {  // params по умолчанию пустой объект(если не передали)
 
             if(!this.accessKey){
                 await this.getAccessKey();
@@ -44,7 +44,7 @@ export class ApiService {
 
             try{
                   // Вместо привычноог fetch запрос отправяем с помощью axios:
-                  const response  = await axios.get(`${this.#apiUrl}${pathname}`,  {                    
+                  const response = await axios.get(`${this.#apiUrl}${pathname}`,  {                    
                         headers: {
                               Authorization: `Bearer ${this.accessKey}`
                         },

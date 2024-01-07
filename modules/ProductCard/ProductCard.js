@@ -29,7 +29,7 @@ export class ProductCard {
       mount(parent, data){                      //  data= {id, name, category, article, characterictics=[[],[],[]], ..}
             this.render(data);                  // отрисовка секции
             if(this.isMounted){      // если секция уже добавлена
-                  return;            // дальнейши код не выполнится // выход из метода
+                  return;             // выход из метода
             }
             
             parent.append(this.element);                              
@@ -100,7 +100,7 @@ export class ProductCard {
                         </svg>
                   `;   
 
-                  productSliderMain.append(productArrowPrev, productArrowNext);
+                  productSliderMain.append(productArrowNext, productArrowPrev);
             
       
                   const productSliderThumbnails = document.createElement('div');
@@ -187,8 +187,6 @@ export class ProductCard {
             productInfo.append(productPrice, productArticle, productCharacteristics, productButtons);
 
             this.containerElement.append(titleElem, productPicture, productInfo);
-         
-            
       }
 
 

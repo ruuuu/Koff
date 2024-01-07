@@ -55,7 +55,7 @@ export class Card {
 
 
             const btnCart = this.cartButton.create(this.id);  // кнпока Добавить в корзину
-            const btnFavorite =  this.likeButton.create(this.id);
+            const btnFavorite = this.likeButton.create(this.id);
 
             article.append(link, info,  btnCart, btnFavorite);
 

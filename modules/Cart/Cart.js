@@ -20,7 +20,7 @@ export class Cart{
                   this.element.classList.add('cart');
                   this.containerElement = addContainer(this.element, 'cart__container');        // завели контенйер
                   this.isMounted = false;                                                                                // элемент еще не добавлен в разметку    
-                  this.debUpdateCart = debounce(this.updateCart.bind(this), 200);    // debounce нужн котгда жмем на кнопку "+"/"-" сразу несколько раз, чтобы вызовов updateCart() несколько не было, а только послдений и в это вызов передаем qanatity равный общему получееному  числу товара                                           
+                  this.debUpdateCart = debounce(this.updateCart.bind(this), 200);    // debounce нужн котгда жмем на кнопку "+"/"-" сразу несколько раз, чтобы вызовов updateCart() не было несколько, а только послдений и в этот вызов передаем qanatity равный общему получееному  числу товара                                           
             
             }
            
@@ -217,11 +217,11 @@ export class Cart{
             const cartPlaceWrapper = document.createElement('div');
             cartPlaceWrapper.classList.add('cart__place-wrapper');
 
-            this.cartPlaceCount = document.createElement('p');          // добавили поле  в объект
+            this.cartPlaceCount = document.createElement('p');          // добавили свойство  в объект
             this.cartPlaceCount.classList.add('cart__place-count');
             this.cartPlaceCount.textContent = `${count} товаров на сумму`;
 
-            this.cartPlacePrice = document.createElement('p');          // добавили поле в объект
+            this.cartPlacePrice = document.createElement('p');          // добавили свойство в объект
             this.cartPlacePrice.classList.add('cart__place-price');
             this.cartPlacePrice.innerHTML = `${totalPrice.toLocaleString()}&nbsp;Р`;
             
@@ -328,12 +328,15 @@ export class Cart{
             
             radioDeliveryFieldset.append(deliveryLegend, deliveryLabel, pickupLabel); 
 
+            // обработчик нажатия радиокнопок:
             radioDeliveryFieldset.addEventListener('change', (evt) => {
                   if(evt.target === deliveryInput){               // если выбрали способ доставки  Доствка
                         address.disabled = false;
+                        this.cartPlaceDelivery.textContent = "Доставка 500 ₽";
                   }
                   else{
                         address.disabled = true;
+                        this.cartPlaceDelivery.textContent = "0 ₽";
                         address.value = '';  // очистка поля
                   }
             });
@@ -356,6 +359,7 @@ export class Cart{
             cardInput.name = 'paymentType';
             cardInput.required = true;
             cardInput.value = 'card';
+            cardInput.checked  = true;
             cardLabel.append(cardInput, cardLabelText);
             
       
@@ -383,7 +387,7 @@ export class Cart{
                   console.log('data form ', data)                             // здесь названия свойств это name у полей формы: { name: 'Алина',  phone: '7654323456',  email: 'tre@mail.ru',  address: 'Москва',  comments: 'текст',  delivetyType: 'delivery',  paymentType: 'pickup' }
                   
                   const { orderId } = await new ApiService().postOrder(data);   // отправка на сервер,  из объекта { orderId: 181,    message: 'Новый заказ успешно добавлен' } вытащили orderId
-                  console.log('result ', result)                                    // { orderId: 181,    message: 'Новый заказ успешно добавлен' }
+                                                     // { orderId: 181,    message: 'Новый заказ успешно добавлен' }
 
                   new Header().changeCount(0);                          // обнуляем число товаров у иконки Корзины
                   router.navigate(`/order/${orderId}`);                            // переходим на страницу /order/${orderId}

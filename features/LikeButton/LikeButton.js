@@ -21,6 +21,7 @@ export class LikeButton {  // кнопка "Добавить в избранно
                   btn.classList.add(`${this.className}--active`);
             }
 
+            
             btn.addEventListener('click', () => {
                   //console.log('кнопка Добавить в избранное')
                   if(this.favoriteService.check(id)){                   // есть ли в this.favoriteService id

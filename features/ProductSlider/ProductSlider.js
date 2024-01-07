@@ -16,7 +16,7 @@ export const productSlider = () => {
                        watchSlidesProgress: true
                   });
             
-                  const swiper2 = new Swiper.default('.product__slider-main',  // большой слайдер
+                  new Swiper.default('.product__slider-main',  // большой слайдер
                   {
                        spaceBetween: 10,
                        navigation: {
